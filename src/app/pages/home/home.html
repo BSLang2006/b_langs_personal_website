@@ -1,0 +1,79 @@
+<section class="hero">
+  <div class="wrap grid">
+    <div class="intro">
+      <p class="eyebrow">Network operations · Infrastructure · Software</p>
+      <h1>Brandon Lang</h1>
+      <p class="lead">
+        I keep networks running, build the tooling around them, and write down what I
+        learn on the way. Marine Corps team leader before this; a cybersecurity degree
+        and about three years of hands-on routing, switching, and wireless since.
+      </p>
+
+      <div class="who">
+        <div class="portrait">
+          @if (hasPortrait()) {
+            <img
+              src="/portrait.jpg"
+              alt="Brandon Lang"
+              width="72"
+              height="72"
+              (error)="hasPortrait.set(false)"
+            />
+          } @else {
+            <span class="monogram" aria-hidden="true">BL</span>
+          }
+        </div>
+        <p class="muted small">
+          Currently in West Palm Beach, FL — studying for CCNP Enterprise and the AWS
+          Cloud Practitioner exam, and <a routerLink="/lab">working it out in public</a>.
+        </p>
+      </div>
+
+      <div class="cta">
+        <a class="btn solid" [href]="site.linkedinUrl" target="_blank" rel="noopener">LinkedIn</a>
+        <a class="btn" [href]="'mailto:' + site.email">Email me</a>
+        <a class="btn" [href]="site.githubUrl" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+
+    <div class="panel-wrap">
+      <app-hud />
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="cards">
+      <a class="card link-card" routerLink="/writing">
+        <p class="eyebrow">Writing</p>
+        <h2>Notes from the work</h2>
+        <p class="muted">
+          Outages I chased down, things that broke in ways the docs did not predict, and
+          what the fix actually was. Comments are open.
+        </p>
+        <span class="more mono">Read the posts →</span>
+      </a>
+
+      <a class="card link-card" routerLink="/builds">
+        <p class="eyebrow">Builds</p>
+        <h2>Things I made</h2>
+        <p class="muted">
+          A self-hosted operations platform, addressable LED fixtures driven over MQTT,
+          and the lab they all run in.
+        </p>
+        <span class="more mono">See the builds →</span>
+      </a>
+
+      <a class="card link-card" routerLink="/lab">
+        <p class="eyebrow">Lab</p>
+        <h2>What I am studying</h2>
+        <p class="muted">
+          A public study plan — what I am working through, where I actually am on it,
+          and what I am doing next.
+        </p>
+        <span class="more mono">Open the lab →</span>
+      </a>
+    </div>
+  </div>
+</section>

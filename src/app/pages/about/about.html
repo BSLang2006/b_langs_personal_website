@@ -1,0 +1,61 @@
+<section class="section">
+  <div class="wrap narrow">
+    <p class="eyebrow">About</p>
+    <h1>Brandon Lang</h1>
+
+    <p class="lead">
+      I work in network operations — isolating the Layer 2 and Layer 3 failures behind an
+      outage, restoring service, and then writing down what actually happened so the next
+      person does not start from zero.
+    </p>
+
+    <p class="muted">
+      Before this I was a team leader in the Marine Corps, which is where I learned that
+      calm and specific beats fast and confident when something is broken and people are
+      waiting. I have a degree in cybersecurity and another in computer programming, which
+      means I tend to end up in the seam between the network and the software running on
+      it — building the monitoring, the automation, and the documentation that neither side
+      quite owns.
+    </p>
+
+    <p class="muted">
+      For the last three years I have deployed and supported routers, switches, wireless,
+      and VPNs across residential and commercial sites, coordinating with ISPs and site
+      engineers when a fault turned out to live upstream. Alongside it I run a lab at home
+      that is genuinely useful rather than decorative — a self-hosted operations platform,
+      LED fixtures I designed the firmware for, and enterprise routing scenarios built
+      specifically so I can break them.
+    </p>
+
+    <h2>What I work with</h2>
+    <dl class="skills">
+      @for (s of skills; track s.group) {
+        <div class="row">
+          <dt class="mono">{{ s.group }}</dt>
+          <dd class="muted">{{ s.items }}</dd>
+        </div>
+      }
+    </dl>
+
+    <h2>Education &amp; certifications</h2>
+    <ul class="plain">
+      <li><strong>BS, Cybersecurity</strong> — Grand Valley State University</li>
+      <li><strong>AAS, Computer Programming</strong> — Grand Rapids Community College</li>
+      @for (c of certs; track c.name) {
+        <li><strong>{{ c.name }}</strong> — <span class="muted">{{ c.note }}</span></li>
+      }
+    </ul>
+
+    <h2>Get in touch</h2>
+    <p class="muted">
+      I am open to network operations, infrastructure, and technical support roles.
+      {{ site.location }}, and comfortable remote.
+    </p>
+
+    <div class="cta">
+      <a class="btn solid" [href]="'mailto:' + site.email">{{ site.email }}</a>
+      <a class="btn" [href]="site.linkedinUrl" target="_blank" rel="noopener">LinkedIn</a>
+      <a class="btn" [href]="site.githubUrl" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </div>
+</section>

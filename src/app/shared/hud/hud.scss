@@ -1,0 +1,148 @@
+.panel {
+  position: relative;
+  background:
+    linear-gradient(180deg, rgba(22, 32, 46, 0.9), rgba(12, 18, 26, 0.9));
+  border: 1px solid var(--line-solid);
+  border-radius: 16px;
+  padding: 1rem 1.1rem 0.9rem;
+  overflow: hidden;
+  box-shadow: 0 20px 60px -30px rgba(0, 0, 0, 0.9);
+}
+
+/* Faint scanline texture, the cheapest way to read as a screen. */
+.panel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.022) 0 1px,
+    transparent 1px 3px
+  );
+}
+
+.strip {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  text-transform: uppercase;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid var(--line-solid);
+}
+.strip .sep { flex: 1; height: 1px; background: var(--line-solid); }
+.strip .live { color: var(--accent); display: inline-flex; align-items: center; gap: 0.4rem; }
+.strip .live i {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent);
+  animation: blink 2s ease-in-out infinite;
+}
+
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+
+.gauges {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  padding: 1.1rem 0 0.4rem;
+}
+
+.gauge { margin: 0; text-align: center; }
+.gauge svg { width: 100%; max-width: 118px; height: auto; transform: rotate(-90deg); }
+
+.track {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.07);
+  stroke-width: 7;
+}
+
+.arc {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-dasharray: var(--dash);
+  stroke-dashoffset: var(--offset);
+  filter: drop-shadow(0 0 6px rgba(46, 230, 197, 0.45));
+  animation: sweep 1.5s cubic-bezier(0.2, 0.75, 0.2, 1) both;
+}
+
+/* Ends on the inline --offset, so the prerendered HTML is already correct
+   for anyone who never runs the animation. */
+@keyframes sweep {
+  from { stroke-dashoffset: var(--dash); }
+  to { stroke-dashoffset: var(--offset); }
+}
+
+figcaption { display: flex; flex-direction: column; gap: 0.1rem; margin-top: -0.3rem; }
+.num { font-size: 1.35rem; font-weight: 700; color: var(--text); }
+.lbl { font-size: 0.82rem; color: var(--text); }
+.det { font-size: 0.62rem; color: var(--muted); letter-spacing: 0.06em; }
+
+.trace {
+  height: 52px;
+  margin: 0.3rem 0 0.9rem;
+  border-top: 1px solid var(--line-solid);
+  border-bottom: 1px solid var(--line-solid);
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+}
+.trace svg { width: 200%; height: 100%; animation: drift 9s linear infinite; }
+.trace polyline {
+  fill: none;
+  stroke: var(--amber);
+  stroke-width: 1.6;
+  opacity: 0.85;
+  filter: drop-shadow(0 0 4px rgba(242, 181, 68, 0.4));
+}
+
+@keyframes drift {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.readouts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+  gap: 0.35rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.readouts li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.028);
+  border: 1px solid var(--line-solid);
+  border-radius: 6px;
+  padding: 0.3rem 0.45rem;
+}
+
+.readouts i { width: 5px; height: 5px; border-radius: 50%; background: var(--muted); flex: none; }
+.readouts .ok i { background: var(--accent); }
+.readouts .active i { background: var(--amber); animation: blink 1.6s ease-in-out infinite; }
+.readouts .active { color: #d9c091; }
+.readouts .idle i { background: transparent; border: 1px solid var(--muted); }
+
+.disclaimer {
+  margin: 0.85rem 0 0;
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(139, 155, 176, 0.6);
+  text-align: right;
+}
+
+@media (max-width: 560px) {
+  .gauges { gap: 0.2rem; }
+  .num { font-size: 1.1rem; }
+  .det { display: none; }
+}

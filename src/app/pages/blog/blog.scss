@@ -1,0 +1,22 @@
+.lead { max-width: 62ch; margin-bottom: 2.5rem; }
+
+.list { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; }
+
+.post {
+  display: block;
+  color: inherit;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.post:hover { text-decoration: none; border-color: var(--accent); transform: translateY(-2px); }
+.post h2 { font-size: 1.3rem; margin-bottom: 0.35rem; }
+
+.meta {
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 0.5rem;
+}
+
+.summary { font-size: 0.96rem; margin-bottom: 0.8rem; max-width: 70ch; }
+.tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0; }

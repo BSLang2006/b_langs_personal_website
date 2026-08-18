@@ -1,0 +1,47 @@
+.narrow { max-width: 720px; }
+
+.back { display: inline-block; font-size: 0.78rem; color: var(--muted); margin-bottom: 2rem; }
+.back:hover { color: var(--accent); text-decoration: none; }
+
+.meta {
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 0.6rem;
+}
+
+.summary { font-size: 1.05rem; margin: 0.6rem 0 1rem; }
+.tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0 0 2.5rem; }
+
+.body { font-size: 1.02rem; }
+.body :is(h2, h3) { margin-top: 2.4rem; }
+.body h2 { font-size: 1.4rem; }
+.body h3 { font-size: 1.12rem; }
+.body blockquote {
+  margin: 1.6rem 0;
+  padding: 0.4rem 0 0.4rem 1.1rem;
+  border-left: 2px solid var(--accent);
+  color: var(--text);
+}
+.body blockquote p { margin: 0; }
+.body code {
+  font-family: var(--mono);
+  font-size: 0.88em;
+  background: var(--surface-2);
+  border: 1px solid var(--line-solid);
+  border-radius: 5px;
+  padding: 0.1em 0.35em;
+}
+.body pre {
+  background: var(--surface);
+  border: 1px solid var(--line-solid);
+  border-radius: var(--radius);
+  padding: 1rem;
+  overflow-x: auto;
+}
+.body pre code { background: none; border: 0; padding: 0; font-size: 0.86rem; }
+.body ul, .body ol { padding-left: 1.2rem; }
+.body li { margin-bottom: 0.4rem; }
+.body strong { color: #fff; }
+.body hr { border: 0; border-top: 1px solid var(--line-solid); margin: 2.5rem 0; }

@@ -1,0 +1,63 @@
+.narrow { max-width: 760px; }
+.lead { max-width: 64ch; margin-bottom: 3rem; }
+
+.track { list-style: none; margin: 0; padding: 0; }
+
+.item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  gap: 1.1rem;
+  padding-bottom: 2.4rem;
+}
+
+/* Connecting line, stopped short on the last item. */
+.item::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: 20px;
+  bottom: -4px;
+  width: 1px;
+  background: var(--line-solid);
+}
+.item:last-child::before { display: none; }
+
+.marker {
+  width: 13px;
+  height: 13px;
+  margin-top: 7px;
+  border-radius: 50%;
+  border: 2px solid var(--line-solid);
+  background: var(--bg);
+  z-index: 1;
+}
+.item.now .marker { border-color: var(--accent); background: var(--accent); box-shadow: 0 0 0 5px var(--accent-soft); }
+.item.scheduled .marker { border-color: var(--amber); background: var(--amber); }
+.item.next .marker { border-color: var(--accent); }
+
+.when {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 0.4rem;
+}
+
+.chip {
+  border: 1px solid var(--line-solid);
+  border-radius: 999px;
+  padding: 0.12rem 0.5rem;
+  background: var(--surface-2);
+}
+.item.now .chip { color: var(--accent); border-color: rgba(46, 230, 197, 0.4); }
+.item.scheduled .chip { color: var(--amber); border-color: rgba(242, 181, 68, 0.4); }
+
+.item h2 { font-size: 1.2rem; margin-bottom: 0.4rem; }
+.content p:last-child { font-size: 0.95rem; margin: 0; }
+
+.note { margin-top: 1rem; }
+.note p:last-child { margin: 0; font-size: 0.95rem; }

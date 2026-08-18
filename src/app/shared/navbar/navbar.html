@@ -1,0 +1,29 @@
+<header class="nav">
+  <div class="wrap bar">
+    <a class="brand" routerLink="/" (click)="close()">
+      <span class="dot" aria-hidden="true"></span>
+      <span class="brand-name">Brandon Lang</span>
+    </a>
+
+    <button
+      class="burger"
+      type="button"
+      [attr.aria-expanded]="open()"
+      aria-controls="primary-nav"
+      aria-label="Toggle navigation"
+      (click)="toggle()"
+    >
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </button>
+
+    <nav id="primary-nav" class="links" [class.open]="open()">
+      <a routerLink="/writing" routerLinkActive="active" (click)="close()">Writing</a>
+      <a routerLink="/builds" routerLinkActive="active" (click)="close()">Builds</a>
+      <a routerLink="/lab" routerLinkActive="active" (click)="close()">Lab</a>
+      <a routerLink="/about" routerLinkActive="active" (click)="close()">About</a>
+      <a class="ext" [href]="site.githubUrl" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+  </div>
+</header>

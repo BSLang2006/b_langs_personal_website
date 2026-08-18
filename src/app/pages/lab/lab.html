@@ -1,0 +1,39 @@
+<section class="section">
+  <div class="wrap narrow">
+    <p class="eyebrow">Lab</p>
+    <h1>What I am studying</h1>
+    <p class="lead muted">
+      A portfolio usually shows the finished thing. This page shows the unfinished ones —
+      what I am working through right now, where I actually am on it, and the problems in
+      my own systems I have not solved yet. It is a more honest picture of how I work than
+      a list of technologies, and writing it down keeps me moving.
+    </p>
+
+    <ol class="track">
+      @for (i of items; track i.title) {
+        <li class="item" [class]="i.status">
+          <div class="marker" aria-hidden="true"></div>
+          <div class="content">
+            <p class="when mono">
+              <span class="chip">{{ labels[i.status] }}</span>
+              {{ i.when }}
+            </p>
+            <h2>{{ i.title }}</h2>
+            <p class="muted">{{ i.body }}</p>
+          </div>
+        </li>
+      }
+    </ol>
+
+    <div class="card note">
+      <p class="eyebrow">Say something</p>
+      <p class="muted">
+        If you have done any of this the hard way, I would genuinely like to hear how it
+        went — what the study material got wrong, what you would skip, what bit you in
+        production. Comments below run on GitHub Discussions.
+      </p>
+    </div>
+
+    <app-giscus term="lab" />
+  </div>
+</section>

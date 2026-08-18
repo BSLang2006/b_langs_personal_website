@@ -1,0 +1,40 @@
+<section class="section">
+  <div class="wrap">
+    <p class="eyebrow">Builds</p>
+    <h1>Things I made</h1>
+    <p class="lead muted">
+      Projects I actually run, not demos. Each one exists because something in the house
+      or the lab needed doing and buying it would have taught me nothing.
+    </p>
+
+    <div class="grid">
+      @for (b of builds; track b.title) {
+        <article class="card build">
+          <div class="thumb">
+            @if (showImage(b)) {
+              <img [src]="b.image" [alt]="b.title" loading="lazy" (error)="onImageError(b.title)" />
+            } @else {
+              <div class="placeholder" aria-hidden="true">
+                <span class="mono">{{ b.stack[0] }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="body">
+            <p class="status mono" [class]="b.status">
+              <i aria-hidden="true"></i>{{ b.status }}
+            </p>
+            <h2>{{ b.title }}</h2>
+            <p class="blurb">{{ b.blurb }}</p>
+            <p class="muted detail">{{ b.detail }}</p>
+            <p class="tags">
+              @for (s of b.stack; track s) {
+                <span class="tag">{{ s }}</span>
+              }
+            </p>
+          </div>
+        </article>
+      }
+    </div>
+  </div>
+</section>

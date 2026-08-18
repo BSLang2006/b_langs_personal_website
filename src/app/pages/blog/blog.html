@@ -1,0 +1,34 @@
+<section class="section">
+  <div class="wrap">
+    <p class="eyebrow">Writing</p>
+    <h1>Notes from the work</h1>
+    <p class="lead muted">
+      Problems I hit, what the cause turned out to be, and the rule I keep afterwards.
+      Mostly networking, operations, and the systems I run at home. Comments are open on
+      every post.
+    </p>
+
+    @if (posts.length) {
+      <ul class="list">
+        @for (p of posts; track p.slug) {
+          <li>
+            <a class="card post" [routerLink]="['/writing', p.slug]">
+              <p class="meta mono">
+                {{ formatDate(p.date) }} · {{ p.readingMinutes }} min read
+              </p>
+              <h2>{{ p.title }}</h2>
+              <p class="muted summary">{{ p.summary }}</p>
+              <p class="tags">
+                @for (t of p.tags; track t) {
+                  <span class="tag">{{ t }}</span>
+                }
+              </p>
+            </a>
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="muted">First post is on the way.</p>
+    }
+  </div>
+</section>

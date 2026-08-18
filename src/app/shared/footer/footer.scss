@@ -1,0 +1,26 @@
+.foot {
+  margin-top: 4rem;
+  border-top: 1px solid var(--line-solid);
+  background: rgba(17, 24, 35, 0.5);
+}
+
+.inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2.5rem;
+  padding-top: 2.5rem;
+  padding-bottom: 1.5rem;
+}
+
+.col { min-width: 150px; }
+.name { font-weight: 700; margin: 0 0 0.2rem; }
+.small { font-size: 0.86rem; margin: 0; }
+
+.links { display: flex; flex-direction: column; gap: 0.45rem; }
+.links a { color: var(--muted); font-size: 0.9rem; }
+.links a:hover { color: var(--accent); }
+
+.bottom {
+  padding-bottom: 2rem;
+}
+.bottom p { font-size: 0.76rem; }

@@ -1,0 +1,29 @@
+@if (post(); as p) {
+  <article class="section">
+    <div class="wrap narrow">
+      <a class="back mono" routerLink="/writing">← All writing</a>
+
+      <p class="meta mono">{{ formatDate(p.date) }} · {{ p.readingMinutes }} min read</p>
+      <h1>{{ p.title }}</h1>
+      <p class="summary muted">{{ p.summary }}</p>
+
+      <p class="tags">
+        @for (t of p.tags; track t) {
+          <span class="tag">{{ t }}</span>
+        }
+      </p>
+
+      <div class="body" [innerHTML]="p.html"></div>
+
+      <app-giscus [term]="p.slug" />
+    </div>
+  </article>
+} @else {
+  <section class="section">
+    <div class="wrap narrow">
+      <h1>Post not found</h1>
+      <p class="muted">That one does not exist — it may have been renamed.</p>
+      <a class="btn" routerLink="/writing">Back to writing</a>
+    </div>
+  </section>
+}
