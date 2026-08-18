@@ -9,14 +9,13 @@ export const site = {
   github: 'BSLang2006',
   githubUrl: 'https://github.com/BSLang2006',
   linkedinUrl: 'https://www.linkedin.com/in/brandon-lang-596b78215',
-  resumeUrl: '/resume.pdf',
 };
 
 // Giscus reads these from giscus.app after you enable Discussions on the repo.
 // Until repoId/categoryId are filled in, the comment box renders a setup notice
 // instead of a broken widget.
 export const giscus = {
-  repo: 'BSLang2006/brandonscottlang',
+  repo: 'BSLang2006/personalWebsite',
   repoId: '',
   category: 'Announcements',
   categoryId: '',

@@ -64,7 +64,7 @@ are configured the page shows a small setup notice instead of a broken widget.
 
 To turn them on:
 
-1. Push this repo to GitHub as `BSLang2006/brandonscottlang` (public).
+1. The repo is `BSLang2006/personalWebsite` — it needs to be **public**.
 2. Enable **Discussions** in the repo settings, and add the
    [giscus app](https://github.com/apps/giscus) to it.
 3. Go to <https://giscus.app>, enter the repo, pick the *Announcements* category.
@@ -89,13 +89,17 @@ site. `amplify.yml` at the repo root already describes the build.
    mistyped URL returns Amplify's default error page.
 4. Add the custom domain under **Domain management**.
 
+## What this site is not
+
+There is no resume PDF and no credentials page, on purpose. Visitors arrive from
+LinkedIn or a resume link, so they already know the background — the site's job is to
+show the work, not restate the CV. That is why `/builds` carries the weight and
+`/about` is deliberately short and personal.
+
 ## Still to do
 
 - **Portrait** — drop `public/portrait.jpg` (square, ~400×400). Until then the landing
   page shows a `BL` monogram.
-- **Resume** — `site.config.ts` has a `resumeUrl` pointing at `/resume.pdf`; add the
-  file to `public/` and link it wherever you want it. Which of the resume variants to
-  publish is a targeting decision, so nothing was published by default.
 - **Build photos** — `public/builds/nexus.jpg`, `lights.jpg`, `lab.jpg`.
 - **Colours** — the palette is a deliberate placeholder, one accent on a dark base.
   All of it lives in the `:root` block at the top of `src/styles.scss`.

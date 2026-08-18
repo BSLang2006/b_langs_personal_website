@@ -88,3 +88,14 @@ Built as specified — stylized, hand-curated, no backend. It reads as gauges ov
 `static readout · live home-lab telemetry planned` so it is not mistaken for
 instrumentation it does not have. That also makes the GitHub-stats upgrade an
 obvious next step rather than a correction.
+
+### Correction — no resume on the site (2026-08-18)
+
+An earlier pass started turning `/about` into a resume page. That was wrong, and the
+brief already said why: visitors arrive with context and have usually seen the resume
+already. The site's job is to **show the work**, not restate it.
+
+So there is no PDF and no credentials wall. `/builds` carries the weight — each entry
+now leads with the decision inside it that was actually interesting, which is the thing
+a resume bullet cannot carry. `/about` is short, personal, and in first person; the
+twenty years before tech appear as texture rather than as an employment history.

@@ -1,15 +1,27 @@
-.lead { max-width: 62ch; margin-bottom: 2.5rem; }
+.lead { max-width: 64ch; margin-bottom: 3.5rem; }
 
-.grid {
+.stack { display: flex; flex-direction: column; gap: 4.5rem; }
+
+.build {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1.2rem;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: 2.5rem;
+  align-items: start;
 }
 
-.build { padding: 0; overflow: hidden; display: flex; flex-direction: column; }
+/* Alternate sides so a long page keeps some rhythm. */
+.build:nth-child(even) .visual { order: 2; }
 
-.thumb { aspect-ratio: 16 / 9; background: var(--surface-2); }
-.thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.visual {
+  position: sticky;
+  top: 90px;
+  aspect-ratio: 4 / 3;
+  border: 1px solid var(--line-solid);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--surface-2);
+}
+.visual img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
 .placeholder {
   width: 100%;
@@ -19,7 +31,6 @@
   background:
     linear-gradient(135deg, rgba(46, 230, 197, 0.10), rgba(242, 181, 68, 0.06)),
     repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.02) 0 10px, transparent 10px 20px);
-  border-bottom: 1px solid var(--line-solid);
 }
 .placeholder span {
   font-size: 0.72rem;
@@ -27,8 +38,6 @@
   text-transform: uppercase;
   color: var(--muted);
 }
-
-.body { padding: 1.25rem; display: flex; flex-direction: column; flex: 1; }
 
 .status {
   display: inline-flex;
@@ -46,7 +55,25 @@
 .status.ongoing i { background: var(--amber); }
 .status.ongoing { color: #d9c091; }
 
-.build h2 { font-size: 1.18rem; }
-.blurb { font-size: 0.98rem; margin-bottom: 0.7rem; }
-.detail { font-size: 0.9rem; }
-.tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: auto 0 0; padding-top: 0.8rem; }
+.build h2 { font-size: 1.7rem; margin-bottom: 0.5rem; }
+.blurb { font-size: 1.05rem; margin-bottom: 1.2rem; }
+.text p { font-size: 0.97rem; }
+
+.highlight {
+  border-left: 2px solid var(--accent);
+  background: linear-gradient(90deg, var(--accent-soft), transparent 70%);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1rem 1.2rem;
+  margin: 1.6rem 0 1.4rem;
+}
+.highlight .eyebrow { margin-bottom: 0.35rem; }
+.highlight p:last-child { margin: 0; font-size: 0.95rem; color: var(--text); }
+
+.tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0; }
+
+@media (max-width: 900px) {
+  .build { grid-template-columns: 1fr; gap: 1.4rem; }
+  .build:nth-child(even) .visual { order: 0; }
+  .visual { position: static; aspect-ratio: 16 / 9; }
+  .stack { gap: 3.5rem; }
+}
