@@ -19,11 +19,10 @@
     </button>
 
     <nav id="primary-nav" class="links" [class.open]="open()">
-      <a routerLink="/writing" routerLinkActive="active" (click)="close()">Writing</a>
-      <a routerLink="/builds" routerLinkActive="active" (click)="close()">Builds</a>
-      <a routerLink="/lab" routerLinkActive="active" (click)="close()">Lab</a>
+      <a routerLink="/writing" routerLinkActive="active" (click)="close()">Library</a>
+      <a routerLink="/builds" routerLinkActive="active" (click)="close()">Watchtower</a>
+      <a routerLink="/lab" routerLinkActive="active" (click)="close()">Forge</a>
       <a routerLink="/about" routerLinkActive="active" (click)="close()">About</a>
-      <a class="ext" [href]="site.githubUrl" target="_blank" rel="noopener">GitHub</a>
     </nav>
   </div>
 </header>
