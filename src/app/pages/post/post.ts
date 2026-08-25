@@ -2,12 +2,11 @@ import { Component, computed, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Title, Meta } from '@angular/platform-browser';
-import { Giscus } from '../../shared/giscus/giscus';
 import { findPost, formatDate } from '../../core/posts';
 
 @Component({
   selector: 'app-post',
-  imports: [RouterLink, Giscus],
+  imports: [RouterLink],
   templateUrl: './post.html',
   styleUrl: './post.scss',
 })
@@ -29,7 +28,7 @@ export class PostPage {
     // Runs during prerender too, so each post ships its own title and description.
     const p = this.post();
     if (p) {
-      this.title.setTitle(`${p.title} — Brandon Lang`);
+      this.title.setTitle(`${p.title} — B Lang's Citadel`);
       this.meta.updateTag({ name: 'description', content: p.summary });
     }
   }

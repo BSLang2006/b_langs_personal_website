@@ -1,47 +1,175 @@
+/* A post is the reading room of the Library: same material as the shelves, but
+   the ruling turns into a page margin and everything gets out of the way of the
+   text. Nothing here moves. */
+
+:host {
+  display: block;
+}
+
+.reading {
+  --paper: #0f1a1a;
+  --paper-line: #1e3230;
+  --ink-faint: #6f8785;
+}
+
 .narrow { max-width: 720px; }
 
-.back { display: inline-block; font-size: 0.78rem; color: var(--muted); margin-bottom: 2rem; }
+.back {
+  display: inline-block;
+  font-size: 0.74rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 2rem;
+}
 .back:hover { color: var(--accent); text-decoration: none; }
 
-.meta {
-  font-size: 0.72rem;
-  letter-spacing: 0.1em;
+/* ---- The plate ---------------------------------------------------------- */
+
+.plate {
+  border-top: 1px solid var(--paper-line);
+  padding-top: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.callnum {
+  font-size: 0.66rem;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--accent);
-  margin: 0 0 0.6rem;
+  margin: 0 0 0.7rem;
 }
 
-.summary { font-size: 1.05rem; margin: 0.6rem 0 1rem; }
-.tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0 0 2.5rem; }
+.plate h1 {
+  text-wrap: balance;
+  margin-bottom: 0.7rem;
+}
 
-.body { font-size: 1.02rem; }
-.body :is(h2, h3) { margin-top: 2.4rem; }
-.body h2 { font-size: 1.4rem; }
-.body h3 { font-size: 1.12rem; }
-.body blockquote {
-  margin: 1.6rem 0;
-  padding: 0.4rem 0 0.4rem 1.1rem;
-  border-left: 2px solid var(--accent);
-  color: var(--text);
+.summary {
+  font-size: 1.08rem;
+  color: #b9c9c6;
+  margin: 0 0 1rem;
+  max-width: 60ch;
 }
-.body blockquote p { margin: 0; }
-.body code {
-  font-family: var(--mono);
-  font-size: 0.88em;
-  background: var(--surface-2);
-  border: 1px solid var(--line-solid);
-  border-radius: 5px;
-  padding: 0.1em 0.35em;
+
+.filed {
+  position: relative;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin: 0;
+  padding-bottom: 1.1rem;
 }
-.body pre {
-  background: var(--surface);
-  border: 1px solid var(--line-solid);
-  border-radius: var(--radius);
-  padding: 1rem;
-  overflow-x: auto;
+
+.filed::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-bottom: 1px dotted var(--paper-line);
 }
-.body pre code { background: none; border: 0; padding: 0; font-size: 0.86rem; }
-.body ul, .body ol { padding-left: 1.2rem; }
-.body li { margin-bottom: 0.4rem; }
-.body strong { color: #fff; }
-.body hr { border: 0; border-top: 1px solid var(--line-solid); margin: 2.5rem 0; }
+
+/* ---- The body ----------------------------------------------------------- */
+
+/* A ruled left margin runs the length of the text, the way it would down the
+   edge of a page. It is the only structure the reading view needs. */
+.body {
+  position: relative;
+  font-size: 1.04rem;
+  line-height: 1.72;
+  padding-left: 1.4rem;
+}
+
+.body::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.35rem;
+  bottom: 0.35rem;
+  border-left: 1px solid var(--paper-line);
+}
+
+/* The post body is injected with [innerHTML], so none of it carries this
+   component's encapsulation attribute — a plain `.body h2` rule compiles to
+   `.body h2[_ngcontent-x]` and silently matches nothing. `::ng-deep` under
+   `:host` is what reaches the rendered markdown while staying scoped to this
+   component. */
+:host ::ng-deep {
+  .body :is(h2, h3) { margin-top: 2.6rem; }
+  .body h2 { font-size: 1.4rem; }
+  .body h3 { font-size: 1.12rem; }
+
+  /* The first line of a post opens slightly larger, so the eye lands on it. */
+  .body > p:first-of-type {
+    font-size: 1.12rem;
+    color: #d7e2e0;
+  }
+
+  .body blockquote {
+    margin: 1.8rem 0;
+    padding: 0.6rem 0 0.6rem 1.2rem;
+    border-left: 2px solid var(--accent);
+    background: linear-gradient(90deg, rgba(46, 230, 197, 0.06), transparent 70%);
+    color: var(--text);
+  }
+  .body blockquote p { margin: 0; }
+
+  .body code {
+    font-family: var(--mono);
+    font-size: 0.88em;
+    background: rgba(46, 230, 197, 0.07);
+    border: 1px solid var(--paper-line);
+    border-radius: 5px;
+    padding: 0.1em 0.35em;
+  }
+  .body pre {
+    background: var(--paper);
+    border: 1px solid var(--paper-line);
+    border-radius: var(--radius);
+    padding: 1rem;
+    overflow-x: auto;
+  }
+  .body pre code { background: none; border: 0; padding: 0; font-size: 0.86rem; }
+  .body ul, .body ol { padding-left: 1.2rem; }
+  .body li { margin-bottom: 0.4rem; }
+  .body strong { color: #fff; }
+  .body hr { border: 0; border-top: 1px solid var(--paper-line); margin: 2.5rem 0; }
+}
+
+/* ---- Colophon ----------------------------------------------------------- */
+
+.colophon {
+  margin-top: 3rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--paper-line);
+}
+
+.subjects {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0 0 1.4rem;
+}
+
+.subjects-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-right: 0.2rem;
+}
+
+.subjects .tag {
+  border-color: var(--paper-line);
+  background: rgba(46, 230, 197, 0.05);
+  color: #93a9a6;
+}
+
+.colophon .back { margin-bottom: 0; }
+
+@media (max-width: 600px) {
+  .body { padding-left: 1rem; }
+}

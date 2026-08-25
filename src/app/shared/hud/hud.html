@@ -1,4 +1,6 @@
 <section class="panel" aria-label="Skills instrument panel">
+  <span class="rail" aria-hidden="true"></span>
+
   <div class="strip">
     <span class="id mono">BSL-01 · OPERATOR PANEL</span>
     <span class="sep" aria-hidden="true"></span>
@@ -8,7 +10,7 @@
 
   <div class="gauges">
     @for (g of gauges; track g.label) {
-      <figure class="gauge">
+      <figure class="gauge" [class]="g.tone">
         <svg viewBox="0 0 120 120" role="img" [attr.aria-label]="g.label + ': ' + g.value + ' of 100'">
           <circle class="track" cx="60" cy="60" r="52" />
           <circle

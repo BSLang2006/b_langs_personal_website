@@ -1,15 +1,15 @@
 <footer class="foot">
   <div class="wrap inner">
     <div class="col">
-      <p class="name">Brandon Lang</p>
+      <p class="name">{{ site.brand }}</p>
       <p class="muted small">{{ site.location }}</p>
     </div>
 
     <nav class="col links" aria-label="Footer">
-      <a routerLink="/writing">Writing</a>
-      <a routerLink="/builds">Builds</a>
-      <a routerLink="/lab">Lab</a>
-      <a routerLink="/about">About</a>
+      <a routerLink="/watchtower">Watchtower</a>
+      <a routerLink="/forge">Forge</a>
+      <a routerLink="/library">Library</a>
+      <a routerLink="/about">The Architect</a>
     </nav>
 
     <div class="col links">
@@ -20,6 +20,6 @@
   </div>
 
   <div class="wrap bottom">
-    <p class="muted small mono">© {{ year }} Brandon Lang · built with Angular</p>
+    <p class="muted small mono">© {{ year }} {{ site.name }} · built with Angular</p>
   </div>
 </footer>

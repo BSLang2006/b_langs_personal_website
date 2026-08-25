@@ -1,10 +1,34 @@
+/* The header is the building's own instrument strip: the same housing language
+   as the HUD panel, and the same three-colour rail across the bottom edge. Each
+   room link is a labelled lamp — dim until you go near it, lit in that room's
+   colour when you are in it. */
+
 .nav {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(10, 14, 19, 0.82);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--line-solid);
+  background:
+    linear-gradient(180deg, rgba(18, 24, 31, 0.92), rgba(10, 14, 19, 0.88));
+  backdrop-filter: blur(12px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* Same strip that runs across the top of the HUD housing. It is the one piece
+   of the building that shows all three rooms at once. */
+.rail {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    var(--watchtower),
+    var(--forge) 50%,
+    var(--library)
+  );
+  opacity: 0.85;
+  box-shadow: 0 0 14px rgba(255, 255, 255, 0.14);
 }
 
 .bar {
@@ -24,13 +48,16 @@
   letter-spacing: -0.01em;
 }
 .brand:hover { text-decoration: none; }
+.brand:hover .dot { box-shadow: 0 0 0 5px rgba(233, 226, 212, 0.14), 0 0 16px #e9e2d4; }
 
+/* The hall's own lamp: warm ivory, the colour the landing page is lit by. */
 .dot {
   width: 9px;
   height: 9px;
   border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 0 4px var(--accent-soft);
+  background: #e9e2d4;
+  box-shadow: 0 0 0 4px rgba(233, 226, 212, 0.10), 0 0 12px rgba(233, 226, 212, 0.7);
+  transition: box-shadow 0.25s ease;
   animation: pulse 2.4s ease-in-out infinite;
 }
 
@@ -42,18 +69,63 @@
 .links {
   display: flex;
   align-items: center;
-  gap: 1.4rem;
-  font-size: 0.94rem;
+  gap: 1.5rem;
 }
 
+/* Panel-readout typography, so the nav belongs to the same instrument family as
+   the HUD rather than looking like a generic site menu. */
 .links a {
-  color: var(--muted);
-  padding: 0.2rem 0;
-  border-bottom: 1px solid transparent;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #8d97a4;
+  padding: 0.35rem 0;
+  transition: color 0.22s ease;
 }
+
 .links a:hover { color: var(--text); text-decoration: none; }
-.links a.active { color: var(--accent); border-bottom-color: var(--accent); }
-.links a.ext::after { content: ' ↗'; font-size: 0.78em; opacity: 0.65; }
+
+/* Each link carries its room's accent (the .room-* classes in styles.scss set
+   --accent), so the lamp and the underline need no per-room rules here. */
+.hall-link { --accent: #e9e2d4; }
+
+.lamp {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex: none;
+  background: var(--accent);
+  opacity: 0.32;
+  transition: opacity 0.22s ease, box-shadow 0.22s ease;
+}
+
+/* The lit underline, drawn under the label only and grown from the left. */
+.links a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.15rem;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--accent);
+  box-shadow: 0 0 12px var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s ease;
+}
+
+.links a:hover .lamp { opacity: 0.85; box-shadow: 0 0 10px var(--accent); }
+.links a:hover::after { transform: scaleX(1); }
+
+.links a.active { color: var(--accent); }
+.links a.active .lamp { opacity: 1; box-shadow: 0 0 12px var(--accent); }
+.links a.active::after { transform: scaleX(1); }
 
 .burger {
   display: none;
@@ -83,11 +155,16 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 0;
-    background: var(--surface);
-    border-bottom: 1px solid var(--line-solid);
+    background: rgba(16, 21, 27, 0.98);
+    border-bottom: 1px solid #2a3441;
     padding: 0.5rem 1.25rem 1rem;
     display: none;
   }
   .links.open { display: flex; }
-  .links a { padding: 0.7rem 0; width: 100%; }
+  .links a { padding: 0.85rem 0; width: 100%; }
+
+  /* Full-width underlines stacked in a menu read as rules, not as lamps. */
+  .links a::after { display: none; }
+  .links a:hover .lamp,
+  .links a.active .lamp { opacity: 1; }
 }

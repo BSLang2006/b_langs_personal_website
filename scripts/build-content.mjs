@@ -1,14 +1,25 @@
-// Reads content/posts/*.md and emits a typed module the app imports directly.
-// Compiling at build time (rather than fetching at runtime) is what lets the
-// post pages prerender with their real body text in the HTML.
-import { readdirSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+// Reads the markdown under content/ and emits one typed module the app imports
+// directly. Compiling at build time (rather than fetching at runtime) is what
+// lets every page prerender with its real body text in the HTML.
+//
+//   content/posts/*.md  -> the Library
+//   content/forge/*.md  -> the Forge
+//
+// Prose is authored as markdown on purpose. It used to live as arrays of
+// concatenated string literals in the component, where deleting a few words
+// silently glued two fragments into a sentence that still compiled.
+import { readdirSync, readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { marked } from 'marked';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const postsDir = join(root, 'content', 'posts');
+const forgeDir = join(root, 'content', 'forge');
 const outFile = join(root, 'src', 'app', 'core', 'content.generated.ts');
+
+// Frontmatter keys whose value is a comma-separated list rather than a string.
+const LIST_KEYS = new Set(['tags', 'stock']);
 
 // Minimal frontmatter: `key: value` lines between --- fences. No nesting.
 function parse(raw) {
@@ -20,26 +31,43 @@ function parse(raw) {
     const at = line.indexOf(':');
     if (at === -1) continue;
     const key = line.slice(0, at).trim();
-    let value = line.slice(at + 1).trim().replace(/^["']|["']$/g, '');
-    meta[key] = key === 'tags'
+    const value = line.slice(at + 1).trim().replace(/^["']|["']$/g, '');
+    meta[key] = LIST_KEYS.has(key)
       ? value.split(',').map((t) => t.trim()).filter(Boolean)
       : value;
   }
   return { meta, body: match[2] };
 }
 
-const files = readdirSync(postsDir).filter((f) => f.endsWith('.md'));
+// Authoring scaffolding lives alongside the content. `template.md` and anything
+// prefixed with `_` are skipped outright — they have no frontmatter to speak of
+// and would otherwise fail the required-field checks and break the build.
+const isScaffold = (f) => f === 'template.md' || f.startsWith('_');
 
-const posts = files.map((file) => {
-  const { meta, body } = parse(readFileSync(join(postsDir, file), 'utf8'));
-  const slug = meta.slug || file.replace(/\.md$/, '');
+function read(dir) {
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir)
+    .filter((f) => f.endsWith('.md') && !isScaffold(f))
+    .map((file) => ({ file, ...parse(readFileSync(join(dir, file), 'utf8')) }));
+}
+
+const require_ = (meta, key, file) => {
+  const value = meta[key];
+  if (!value || (Array.isArray(value) && !value.length)) {
+    throw new Error(`${file}: missing "${key}" in frontmatter`);
+  }
+  return value;
+};
+
+// ---- The Library ----------------------------------------------------------
+
+const posts = read(postsDir).map(({ file, meta, body }) => {
   const words = body.split(/\s+/).filter(Boolean).length;
-
-  if (!meta.title) throw new Error(`${file}: missing "title" in frontmatter`);
-  if (!meta.date) throw new Error(`${file}: missing "date" in frontmatter`);
+  require_(meta, 'title', file);
+  require_(meta, 'date', file);
 
   return {
-    slug,
+    slug: meta.slug || file.replace(/\.md$/, ''),
     title: meta.title,
     date: meta.date,
     summary: meta.summary || '',
@@ -55,21 +83,89 @@ const published = posts
   .filter((p) => !p.draft)
   .sort((a, b) => (a.date < b.date ? 1 : -1));
 
+// ---- The Forge ------------------------------------------------------------
+
+const STATES = new Set(['in-service', 'in-the-fire']);
+
+// Everything after this marker is the struck block — the decision inside the
+// piece. It is an HTML comment so it stays invisible in any markdown preview.
+const STRUCK = /^<!--\s*struck\s*-->\s*$/m;
+
+const forge = read(forgeDir).map(({ file, meta, body }) => {
+  require_(meta, 'title', file);
+  require_(meta, 'blurb', file);
+  require_(meta, 'stock', file);
+  const state = require_(meta, 'state', file);
+
+  if (!STATES.has(state)) {
+    throw new Error(
+      `${file}: "state" is "${state}" — expected one of ${[...STATES].join(', ')}`,
+    );
+  }
+
+  const [main, struck] = body.split(STRUCK);
+
+  return {
+    slug: meta.slug || file.replace(/\.md$/, ''),
+    title: meta.title,
+    state,
+    blurb: meta.blurb,
+    stock: meta.stock,
+    // Optional. Keep the leading slash — a relative path breaks on '/forge/'.
+    image: meta.image || undefined,
+    draft: meta.draft === 'true',
+    // Lower sorts first; pieces without one fall to the back in title order.
+    order: Number.isFinite(Number(meta.order)) ? Number(meta.order) : 100,
+    html: marked.parse(main.trim(), { async: false }),
+    struck: struck?.trim()
+      ? {
+          label: meta.struck || 'Where the work went',
+          html: marked.parse(struck.trim(), { async: false }),
+        }
+      : null,
+  };
+});
+
+const pieces = forge
+  .filter((p) => !p.draft)
+  .sort((a, b) => a.order - b.order || a.title.localeCompare(b.title));
+
+// ---- Emit -----------------------------------------------------------------
+
+const strip = (k, v) => (k === 'draft' || k === 'order' ? undefined : v);
+
 mkdirSync(dirname(outFile), { recursive: true });
 writeFileSync(
   outFile,
   `// GENERATED by scripts/build-content.mjs — do not edit.\n` +
-    `// Source: content/posts/*.md\n\n` +
+    `// Source: content/posts/*.md and content/forge/*.md\n\n` +
     `export interface Post {\n` +
     `  slug: string;\n  title: string;\n  date: string;\n  summary: string;\n` +
     `  tags: string[];\n  readingMinutes: number;\n  html: string;\n}\n\n` +
-    `export const posts: Post[] = ${JSON.stringify(published, (k, v) => (k === 'draft' ? undefined : v), 2)};\n`,
+    `export interface ForgePiece {\n` +
+    `  slug: string;\n  title: string;\n  state: 'in-service' | 'in-the-fire';\n` +
+    `  blurb: string;\n  stock: string[];\n  image?: string;\n  html: string;\n` +
+    `  struck: { label: string; html: string } | null;\n}\n\n` +
+    `export const posts: Post[] = ${JSON.stringify(published, strip, 2)};\n\n` +
+    `export const forge: ForgePiece[] = ${JSON.stringify(pieces, strip, 2)};\n`,
   'utf8',
 );
 
-// Sitemap and robots ship as static assets so the crawler sees every prerendered route.
+// ---- Sitemap and robots ---------------------------------------------------
+
+// These ship as static assets so the crawler sees every prerendered route.
 const origin = 'https://brandonscottlang.com';
-const routes = ['', 'writing', 'builds', 'lab', 'about', ...published.map((p) => `writing/${p.slug}`)];
+// Room names are the source of truth for the URLs. The old /writing, /builds and
+// /lab paths still resolve (see app.routes.ts and the Amplify rules in README),
+// but they are deliberately absent here — a sitemap should list canonical URLs only.
+const routes = [
+  '',
+  'watchtower',
+  'forge',
+  'library',
+  'about',
+  ...published.map((p) => `library/${p.slug}`),
+];
 const today = new Date().toISOString().slice(0, 10);
 
 const urls = routes
@@ -91,4 +187,7 @@ writeFileSync(
   'utf8',
 );
 
-console.log(`content: ${published.length} post(s), ${routes.length} sitemap url(s)`);
+console.log(
+  `content: ${published.length} post(s), ${pieces.length} forge piece(s), ` +
+    `${routes.length} sitemap url(s)`,
+);

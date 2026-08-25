@@ -1,0 +1,215 @@
+/* Library — still, ordered, layered. The Watchtower is distance and the Forge is
+   heat; this room is *filing*. Nothing animates on its own, everything is ruled
+   and aligned, and the only movement is an entry sliding out of the shelf when
+   you reach for it. Same bones as the other rooms — only the material changes. */
+
+:host {
+  display: block;
+}
+
+.library {
+  --paper: #0f1a1a;
+  --paper-line: #1e3230;
+  --ink-faint: #6f8785;
+}
+
+/* ---- The stacks --------------------------------------------------------- */
+
+.stacks {
+  position: relative;
+  overflow: hidden;
+  padding: 4.5rem 0 2.5rem;
+  border-bottom: 1px solid var(--paper-line);
+}
+
+/* Shelf uprights, seen edge-on and far off. Regular, vertical, and quiet — the
+   opposite of the Watchtower's single travelling sweep. */
+.uprights {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(46, 230, 197, 0.055) 0 1px,
+      transparent 1px 84px
+    ),
+    linear-gradient(180deg, rgba(46, 230, 197, 0.07), transparent 68%);
+  mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.35) 60%, transparent 100%);
+}
+
+.stacks-inner {
+  position: relative;
+}
+
+.stacks h1 {
+  text-wrap: balance;
+}
+
+.stacks .lead {
+  max-width: 62ch;
+  margin-bottom: 0;
+}
+
+/* ---- Shelf rules -------------------------------------------------------- */
+
+.shelf + .shelf {
+  margin-top: 3.25rem;
+}
+
+/* A year is a shelf: a hard rule with the label sitting on it. */
+.shelf-rule {
+  display: flex;
+  align-items: baseline;
+  gap: 0.9rem;
+  margin: 0 0 1.5rem;
+  font-size: 1rem;
+  letter-spacing: 0;
+}
+
+.shelf-rule .year {
+  font-size: 0.86rem;
+  letter-spacing: 0.24em;
+  color: var(--accent);
+}
+
+/* The rule itself — drawn between the year and the count. */
+.shelf-rule::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--paper-line), rgba(30, 50, 48, 0.25));
+  order: 1;
+}
+
+.shelf-rule .count {
+  order: 2;
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* ---- Catalog entries ---------------------------------------------------- */
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.9rem;
+}
+
+.entry {
+  position: relative;
+  display: block;
+  color: inherit;
+  padding: 1.15rem 1.35rem 1.15rem 1.6rem;
+  background: linear-gradient(180deg, var(--paper), #0c1516);
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius);
+  transition: transform 0.22s ease, border-color 0.22s ease, background-color 0.22s ease;
+}
+
+/* The spine. Reaching for an entry pulls it out of the shelf rather than
+   lifting it off the page — the whole room is horizontal. */
+.spine {
+  position: absolute;
+  left: 0;
+  top: 0.75rem;
+  bottom: 0.75rem;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: rgba(46, 230, 197, 0.35);
+  transition: background-color 0.22s ease, box-shadow 0.22s ease, top 0.22s ease,
+    bottom 0.22s ease;
+}
+
+.entry:hover,
+.entry:focus-visible {
+  text-decoration: none;
+  transform: translateX(7px);
+  border-color: rgba(46, 230, 197, 0.35);
+}
+
+.entry:hover .spine,
+.entry:focus-visible .spine {
+  top: 0;
+  bottom: 0;
+  background: var(--accent);
+  box-shadow: 0 0 14px rgba(46, 230, 197, 0.5);
+}
+
+/* ---- The card face ------------------------------------------------------ */
+
+.callnum {
+  font-size: 0.66rem;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  margin: 0 0 0.45rem;
+}
+
+.entry h3 {
+  font-size: 1.28rem;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  margin: 0 0 0.4rem;
+  max-width: 46ch;
+}
+
+/* The ruled line under the title — an index card, not a blog card. */
+.filed {
+  position: relative;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin: 0 0 0.85rem;
+  padding-bottom: 0.7rem;
+}
+
+.filed::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-bottom: 1px dotted var(--paper-line);
+}
+
+.summary {
+  font-size: 0.96rem;
+  margin-bottom: 0.85rem;
+  max-width: 72ch;
+}
+
+.subjects {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+}
+
+.subjects-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-right: 0.2rem;
+}
+
+.subjects .tag {
+  border-color: var(--paper-line);
+  background: rgba(46, 230, 197, 0.05);
+  color: #93a9a6;
+}
+
+.empty {
+  padding: 2rem 0;
+}
+
+@media (max-width: 600px) {
+  .entry { padding: 1rem 1rem 1rem 1.25rem; }
+  .entry:hover, .entry:focus-visible { transform: translateX(4px); }
+}

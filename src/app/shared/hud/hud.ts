@@ -1,9 +1,15 @@
 import { Component } from '@angular/core';
 
+// The hall itself has no colour, so the panel is where the building's palette
+// lives: one gauge per room accent. It doubles as a legend — by the time you
+// reach the three doors below, you have already met the three colours.
+type Tone = 'watchtower' | 'forge' | 'library';
+
 interface Gauge {
   label: string;
   value: number; // 0-100, hand-curated — this panel is stylized, not telemetry
   detail: string;
+  tone: Tone;
 }
 
 interface Readout {
@@ -22,9 +28,9 @@ export class Hud {
   readonly circumference = CIRCUMFERENCE;
 
   readonly gauges: Gauge[] = [
-    { label: 'Network', value: 88, detail: 'OSPF · BGP · VLAN · VPN' },
-    { label: 'Systems', value: 79, detail: 'Linux · Docker · TLS · SQL' },
-    { label: 'Software', value: 71, detail: 'Python · TypeScript · API' },
+    { label: 'Network', value: 88, detail: 'OSPF · BGP · VLAN · VPN', tone: 'watchtower' },
+    { label: 'Systems', value: 79, detail: 'Linux · Docker · TLS · SQL', tone: 'forge' },
+    { label: 'Software', value: 71, detail: 'Python · TypeScript · API', tone: 'library' },
   ];
 
   readonly readouts: Readout[] = [

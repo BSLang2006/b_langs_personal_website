@@ -1,29 +1,39 @@
 @if (post(); as p) {
-  <article class="section">
-    <div class="wrap narrow">
-      <a class="back mono" routerLink="/writing">← All writing</a>
+  <div class="room-library reading">
+    <article class="section">
+      <div class="wrap narrow">
+        <a class="back mono" routerLink="/library">&#8592; Back to the shelf</a>
 
-      <p class="meta mono">{{ formatDate(p.date) }} · {{ p.readingMinutes }} min read</p>
-      <h1>{{ p.title }}</h1>
-      <p class="summary muted">{{ p.summary }}</p>
+        <header class="plate">
+          <p class="callnum mono">
+            {{ p.date }} &nbsp;·&nbsp; {{ p.readingMinutes }} MIN &nbsp;·&nbsp;
+            {{ p.tags[0] ?? 'GENERAL' }}
+          </p>
+          <h1>{{ p.title }}</h1>
+          <p class="summary">{{ p.summary }}</p>
+          <p class="filed mono">Filed {{ formatDate(p.date) }}</p>
+        </header>
 
-      <p class="tags">
-        @for (t of p.tags; track t) {
-          <span class="tag">{{ t }}</span>
-        }
-      </p>
+        <div class="body" [innerHTML]="p.html"></div>
 
-      <div class="body" [innerHTML]="p.html"></div>
-
-      <app-giscus [term]="p.slug" />
-    </div>
-  </article>
+        <footer class="colophon">
+          <p class="subjects">
+            <span class="subjects-label mono">subjects</span>
+            @for (t of p.tags; track t) {
+              <span class="tag">{{ t }}</span>
+            }
+          </p>
+          <a class="back mono" routerLink="/library">&#8592; Back to the shelf</a>
+        </footer>
+      </div>
+    </article>
+  </div>
 } @else {
   <section class="section">
     <div class="wrap narrow">
-      <h1>Post not found</h1>
+      <h1>Not on the shelf</h1>
       <p class="muted">That one does not exist — it may have been renamed.</p>
-      <a class="btn" routerLink="/writing">Back to writing</a>
+      <a class="btn" routerLink="/library">Back to the library</a>
     </div>
   </section>
 }

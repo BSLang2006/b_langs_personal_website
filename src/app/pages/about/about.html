@@ -1,6 +1,8 @@
-<section class="section">
+<section class="hall-page">
+  <div class="lamp" aria-hidden="true"></div>
+
   <div class="wrap narrow">
-    <p class="eyebrow">About</p>
+    <p class="eyebrow">The Architect</p>
     <h1>Hi — I'm Brandon.</h1>
 
     <p class="lead">
@@ -32,17 +34,20 @@
     </p>
 
     <div class="pointers">
-      <a class="card pointer" routerLink="/builds">
-        <p class="eyebrow">Builds</p>
+      <a class="pointer room-watchtower" routerLink="/watchtower">
+        <span class="light" aria-hidden="true"></span>
+        <p class="eyebrow">Watchtower</p>
+        <p class="muted">System health, the architecture diagrams, and what actually happened when something broke.</p>
+      </a>
+      <a class="pointer room-forge" routerLink="/forge">
+        <span class="light" aria-hidden="true"></span>
+        <p class="eyebrow">Forge</p>
         <p class="muted">The things I made, and the decisions inside them that were actually interesting.</p>
       </a>
-      <a class="card pointer" routerLink="/writing">
-        <p class="eyebrow">Writing</p>
+      <a class="pointer room-library" routerLink="/library">
+        <span class="light" aria-hidden="true"></span>
+        <p class="eyebrow">Library</p>
         <p class="muted">What broke, what the cause turned out to be, and the rule I keep now.</p>
-      </a>
-      <a class="card pointer" routerLink="/lab">
-        <p class="eyebrow">Lab</p>
-        <p class="muted">What I am studying, and the problems in my own systems I have not solved yet.</p>
       </a>
     </div>
 

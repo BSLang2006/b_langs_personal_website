@@ -10,7 +10,25 @@
   --muted: #8b9bb0;
   --accent: #2ee6c5;
   --accent-soft: rgba(46, 230, 197, 0.12);
+  --accent-ink: #04231e;
   --amber: #f2b544;
+
+  /* Room accents. The site is one building with three rooms; the shared shell
+     (nav, footer, type scale, card geometry) never changes, and the room is
+     told apart by material and light. A room sets these three variables on its
+     own root element and every shared piece — .eyebrow, .tag, .btn, the focus
+     ring — retunes itself without knowing which room it is standing in. */
+  --watchtower: #7ab8ff;
+  --watchtower-soft: rgba(122, 184, 255, 0.12);
+  --watchtower-ink: #06182c;
+
+  --forge: #ff8b3d;
+  --forge-soft: rgba(255, 139, 61, 0.13);
+  --forge-ink: #2a1102;
+
+  --library: #2ee6c5;
+  --library-soft: rgba(46, 230, 197, 0.12);
+  --library-ink: #04231e;
   --radius: 12px;
   --maxw: 1120px;
 
@@ -33,10 +51,11 @@ html, body {
 }
 
 body {
-  /* Faint instrument glow behind the whole page. */
+  /* The building's own light is neutral. Colour belongs to the rooms — each one
+     lays its own down over this, so a global tint would fight all three. */
   background-image:
-    radial-gradient(900px 500px at 78% -8%, rgba(46, 230, 197, 0.10), transparent 60%),
-    radial-gradient(700px 420px at 8% 4%, rgba(242, 181, 68, 0.06), transparent 60%);
+    radial-gradient(1000px 560px at 70% -10%, rgba(228, 234, 242, 0.045), transparent 62%),
+    radial-gradient(760px 440px at 6% 2%, rgba(228, 234, 242, 0.028), transparent 60%);
   background-attachment: fixed;
 }
 
@@ -79,7 +98,7 @@ p { margin: 0 0 1rem; }
   font-size: 0.92rem;
 }
 .btn:hover { background: var(--accent-soft); text-decoration: none; }
-.btn.solid { background: var(--accent); color: #04231e; }
+.btn.solid { background: var(--accent); color: var(--accent-ink); }
 .btn.solid:hover { filter: brightness(1.08); }
 
 .tag {
@@ -91,6 +110,22 @@ p { margin: 0 0 1rem; }
   border: 1px solid var(--line-solid);
   color: var(--muted);
   background: var(--surface-2);
+}
+
+.room-watchtower {
+  --accent: var(--watchtower);
+  --accent-soft: var(--watchtower-soft);
+  --accent-ink: var(--watchtower-ink);
+}
+.room-forge {
+  --accent: var(--forge);
+  --accent-soft: var(--forge-soft);
+  --accent-ink: var(--forge-ink);
+}
+.room-library {
+  --accent: var(--library);
+  --accent-soft: var(--library-soft);
+  --accent-ink: var(--library-ink);
 }
 
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }

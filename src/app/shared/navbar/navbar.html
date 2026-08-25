@@ -2,7 +2,7 @@
   <div class="wrap bar">
     <a class="brand" routerLink="/" (click)="close()">
       <span class="dot" aria-hidden="true"></span>
-      <span class="brand-name">Brandon Lang</span>
+      <span class="brand-name">B Lang's Citadel</span>
     </a>
 
     <button
@@ -19,10 +19,20 @@
     </button>
 
     <nav id="primary-nav" class="links" [class.open]="open()">
-      <a routerLink="/writing" routerLinkActive="active" (click)="close()">Library</a>
-      <a routerLink="/builds" routerLinkActive="active" (click)="close()">Watchtower</a>
-      <a routerLink="/lab" routerLinkActive="active" (click)="close()">Forge</a>
-      <a routerLink="/about" routerLinkActive="active" (click)="close()">About</a>
+      <a class="room-watchtower" routerLink="/watchtower" routerLinkActive="active" (click)="close()">
+        <i class="lamp" aria-hidden="true"></i>Watchtower
+      </a>
+      <a class="room-forge" routerLink="/forge" routerLinkActive="active" (click)="close()">
+        <i class="lamp" aria-hidden="true"></i>Forge
+      </a>
+      <a class="room-library" routerLink="/library" routerLinkActive="active" (click)="close()">
+        <i class="lamp" aria-hidden="true"></i>Library
+      </a>
+      <a class="hall-link" routerLink="/about" routerLinkActive="active" (click)="close()">
+        <i class="lamp" aria-hidden="true"></i>The Architect
+      </a>
     </nav>
   </div>
+
+  <span class="rail" aria-hidden="true"></span>
 </header>

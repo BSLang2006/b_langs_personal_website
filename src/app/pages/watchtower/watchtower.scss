@@ -1,0 +1,654 @@
+/* Watchtower — a console rather than a document. The operator stands at the
+   centre of an arc with three sectors on it; the page holds nothing else, and
+   every detail opens in the window. Thin glowing linework, mono labels, a lot
+   of empty air. Shared bones (type scale, .eyebrow, nav, footer) untouched. */
+
+:host {
+  display: block;
+}
+
+.watchtower {
+  --cold-surface: #0d1622;
+  --cold-line: #1d2c3f;
+  --glow: rgba(122, 184, 255, 0.55);
+}
+
+/* ---- Readout strip ------------------------------------------------------ */
+
+/* Deliberately not a hero. The room's subject is the console below it, so the
+   title behaves like a label on the housing. */
+.masthead {
+  padding: 2.25rem 0 0;
+}
+
+.masthead-inner {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+  padding-bottom: 1rem;
+}
+
+.titles .eyebrow { margin-bottom: 0.3rem; }
+
+.masthead h1 {
+  font-size: clamp(1.6rem, 3.4vw, 2.3rem);
+  margin: 0;
+}
+
+.masthead .lead {
+  max-width: 46ch;
+  margin: 0;
+  font-size: 0.92rem;
+  text-align: right;
+}
+
+@media (max-width: 760px) {
+  .masthead .lead { text-align: left; }
+}
+
+/* ---- The console -------------------------------------------------------- */
+
+.console-section {
+  padding: 1rem 0 4.5rem;
+}
+
+.console {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1000 / 400;
+}
+
+.figure {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.outline,
+.inner-line {
+  fill: none;
+  stroke: rgba(122, 184, 255, 0.28);
+  stroke-width: 1;
+}
+
+.inner-line {
+  stroke: rgba(122, 184, 255, 0.14);
+  stroke-dasharray: 3 7;
+}
+
+.ticks line {
+  stroke: rgba(122, 184, 255, 0.3);
+  stroke-width: 1;
+}
+
+.ticks line.long {
+  stroke: rgba(122, 184, 255, 0.55);
+}
+
+/* ---- Sector bands ------------------------------------------------------- */
+
+.sector-figure .band {
+  fill: none;
+  stroke: rgba(122, 184, 255, 0.22);
+  stroke-width: 14;
+  stroke-linecap: butt;
+  transition: stroke 0.25s ease, stroke-width 0.25s ease, filter 0.25s ease;
+}
+
+.sector-figure .spoke {
+  fill: none;
+  stroke: rgba(122, 184, 255, 0.14);
+  stroke-width: 1;
+  stroke-dasharray: 2 6;
+  transition: stroke 0.25s ease;
+}
+
+/* Lit from the component, so hover and keyboard focus behave identically. */
+.sector-figure.lit .band {
+  stroke: var(--accent);
+  stroke-width: 18;
+  filter: drop-shadow(0 0 10px var(--glow));
+}
+
+.sector-figure.lit .spoke {
+  stroke: rgba(122, 184, 255, 0.5);
+  stroke-dasharray: none;
+}
+
+/* ---- The operator ------------------------------------------------------- */
+
+.reticle .ring {
+  fill: none;
+  stroke: rgba(122, 184, 255, 0.35);
+  stroke-width: 1;
+}
+
+.reticle .ring.outer {
+  stroke-dasharray: 4 6;
+  animation: turn 24s linear infinite;
+  transform-origin: 500px 340px;
+}
+
+.reticle .core {
+  fill: var(--accent);
+  filter: drop-shadow(0 0 10px var(--glow));
+}
+
+.reticle line {
+  stroke: rgba(122, 184, 255, 0.45);
+  stroke-width: 1;
+}
+
+/* The centre reports the exception, not the average. */
+.reticle.watch .core { fill: var(--amber); filter: drop-shadow(0 0 10px rgba(242, 181, 68, 0.6)); }
+.reticle.degraded .core { fill: #ff6b5e; filter: drop-shadow(0 0 12px rgba(255, 107, 94, 0.7)); }
+
+@keyframes turn {
+  to { transform: rotate(360deg); }
+}
+
+/* ---- Sector buttons ----------------------------------------------------- */
+
+.sector {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.5rem 0.9rem;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  color: inherit;
+  transition: transform 0.25s ease;
+}
+
+.sector-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #a9bccf;
+  transition: color 0.25s ease, text-shadow 0.25s ease;
+}
+
+.sector-count {
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--accent);
+  transition: text-shadow 0.25s ease;
+}
+
+.sector:hover,
+.sector:focus-visible {
+  transform: translate(-50%, -50%) scale(1.04);
+}
+
+.sector:hover .sector-label,
+.sector:focus-visible .sector-label,
+.sector.active .sector-label {
+  color: var(--accent);
+  text-shadow: 0 0 14px var(--glow);
+}
+
+.sector:hover .sector-count,
+.sector:focus-visible .sector-count,
+.sector.active .sector-count {
+  text-shadow: 0 0 18px var(--glow);
+}
+
+.callsign {
+  position: absolute;
+  left: 50%;
+  bottom: -0.25rem;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0;
+  white-space: nowrap;
+  font-size: 0.66rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.callsign .id { color: #a9bccf; }
+.callsign .sep { width: 1px; height: 10px; background: var(--cold-line); }
+.callsign .hint { color: rgba(139, 155, 176, 0.7); }
+.callsign .status.nominal { color: var(--accent); }
+.callsign .status.watch { color: #e0bd7f; }
+.callsign .status.degraded { color: #ff9d94; }
+
+/* An arc needs width. Below the breakpoint it flattens into three plates that
+   speak the same language — label, count, lit edge — without the geometry. */
+@media (max-width: 760px) {
+  .console {
+    aspect-ratio: auto;
+    display: grid;
+    gap: 0.6rem;
+    padding-bottom: 2.25rem;
+  }
+
+  .figure { display: none; }
+
+  .sector {
+    position: static;
+    transform: none;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 1rem 1.1rem;
+    background: var(--cold-surface);
+    border: 1px solid var(--cold-line);
+    border-left: 3px solid rgba(122, 184, 255, 0.45);
+    border-radius: 6px;
+  }
+
+  .sector:hover,
+  .sector:focus-visible { transform: none; border-left-color: var(--accent); }
+
+  .callsign { bottom: 0; }
+}
+
+/* ---- The window --------------------------------------------------------- */
+
+.window-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+}
+
+/* A real button, so a click outside closes and the control is reachable
+   without a mouse. It sits behind the window. */
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  border: 0;
+  cursor: default;
+  background: rgba(4, 8, 14, 0.84);
+  backdrop-filter: blur(4px);
+}
+
+.window {
+  position: relative;
+  width: min(1180px, 100%);
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, #0f1926, #0a121c);
+  border: 1px solid rgba(122, 184, 255, 0.35);
+  border-radius: var(--radius);
+  box-shadow: 0 40px 120px -40px rgba(0, 0, 0, 0.95), 0 0 40px -20px var(--glow);
+  overflow: hidden;
+}
+
+.window-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 0.7rem 0.9rem;
+  border-bottom: 1px solid var(--cold-line);
+  background: rgba(122, 184, 255, 0.05);
+}
+
+.bar-id {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin: 0;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.bar-id .callsign-id { color: var(--accent); }
+.bar-id .sep { width: 1px; height: 12px; background: var(--cold-line); }
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.controls button,
+.controls a,
+.back {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  line-height: 1;
+  color: #a9bccf;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--cold-line);
+  border-radius: 5px;
+  padding: 0.4rem 0.55rem;
+  cursor: pointer;
+  letter-spacing: 0.1em;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.controls .wide { padding: 0.4rem 0.7rem; }
+
+.controls button:hover,
+.controls a:hover,
+.back:hover {
+  color: var(--accent);
+  border-color: rgba(122, 184, 255, 0.5);
+  text-decoration: none;
+}
+
+.controls .close { font-size: 0.95rem; padding: 0.25rem 0.5rem; }
+
+.controls .zoom {
+  min-width: 3.2rem;
+  text-align: center;
+  font-size: 0.68rem;
+  color: var(--muted);
+}
+
+.window-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 1.1rem;
+}
+
+/* The light table fills the window instead of scrolling in it. */
+.window-body:has(.plate) { padding: 0; overflow: hidden; }
+
+/* ---- Sector one: the board ---------------------------------------------- */
+
+.board {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1px;
+  background: var(--cold-line);
+  border: 1px solid var(--cold-line);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.station {
+  display: grid;
+  grid-template-columns: 1.1rem 12rem 8rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: 0.75rem;
+  background: var(--cold-surface);
+  padding: 0.8rem 1rem;
+}
+
+.station .lamp {
+  align-self: center;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+
+.station .name { margin: 0; font-weight: 600; }
+.station .state {
+  margin: 0;
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.station .note { margin: 0; font-size: 0.88rem; }
+
+/* Green is not in this palette, so nominal reads in the room's own blue and
+   attention is carried by amber, the way an instrument would. */
+.station.nominal .lamp {
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--glow);
+}
+.station.nominal .state { color: var(--accent); }
+
+.station.watch .lamp {
+  background: var(--amber);
+  box-shadow: 0 0 10px rgba(242, 181, 68, 0.75);
+  animation: blink 2s ease-in-out infinite;
+}
+.station.watch .state { color: #e0bd7f; }
+
+.station.degraded .lamp {
+  background: #ff6b5e;
+  box-shadow: 0 0 12px rgba(255, 107, 94, 0.8);
+  animation: blink 1.2s ease-in-out infinite;
+}
+.station.degraded .state { color: #ff9d94; }
+
+.station.planned .lamp { background: transparent; border: 1px dashed var(--muted); }
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.footnote {
+  margin: 0.9rem 0 0;
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(139, 155, 176, 0.65);
+  text-align: right;
+}
+
+@media (max-width: 760px) {
+  .station { grid-template-columns: 1.1rem minmax(0, 1fr); row-gap: 0.3rem; }
+  .station .state,
+  .station .note { grid-column: 2; }
+}
+
+/* ---- Sector two: the cabinet -------------------------------------------- */
+
+.drawer + .drawer { margin-top: 1.5rem; }
+
+.drawer-label {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #a9bccf;
+  margin: 0 0 0.6rem;
+}
+
+.drawer-label .pull {
+  width: 18px;
+  height: 6px;
+  border-radius: 3px;
+  border: 1px solid var(--cold-line);
+  background: linear-gradient(180deg, rgba(122, 184, 255, 0.25), transparent);
+}
+
+.drawer-count {
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  border: 1px solid var(--cold-line);
+  border-radius: 999px;
+  padding: 0.05rem 0.45rem;
+}
+
+.rack { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.4rem; }
+
+/* A flight progress strip: dense, mono, one line, pulled sideways out of the
+   rack the way you would actually pull one. */
+.strip {
+  position: relative;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 4px 6.5rem minmax(0, 1fr) 9rem 5rem 4.5rem;
+  align-items: center;
+  gap: 0.85rem;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  padding: 0.65rem 0.9rem 0.65rem 0;
+  background: linear-gradient(180deg, var(--cold-surface), #0b1320);
+  border: 1px solid var(--cold-line);
+  border-radius: 6px;
+  overflow: hidden;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.strip:hover,
+.strip:focus-visible {
+  transform: translateX(6px);
+  border-color: rgba(122, 184, 255, 0.45);
+}
+
+.strip .edge {
+  align-self: stretch;
+  background: var(--accent);
+  opacity: 0.5;
+  transition: opacity 0.2s ease, box-shadow 0.2s ease;
+}
+
+.strip:hover .edge,
+.strip:focus-visible .edge { opacity: 1; box-shadow: 0 0 14px var(--glow); }
+
+/* Level is carried on the strip edge, so a drawer reads by colour alone. */
+.edge.context { background: #7ab8ff; }
+.edge.container { background: #9ed0ff; }
+.edge.component { background: #c7e3ff; }
+.edge.deployment { background: var(--amber); }
+.edge.network { background: #6fe3d0; }
+
+.strip .callsign-id { font-size: 0.68rem; letter-spacing: 0.14em; color: var(--accent); }
+
+.strip-title {
+  font-size: 0.94rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.strip .level,
+.strip .drawn {
+  font-size: 0.64rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.pull-hint {
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  text-align: right;
+}
+
+.strip:hover .pull-hint,
+.strip:focus-visible .pull-hint { opacity: 1; }
+
+.empty {
+  padding: 1.5rem 0;
+  border: 1px dashed var(--cold-line);
+  border-radius: 6px;
+  text-align: center;
+}
+
+@media (max-width: 860px) {
+  .strip { grid-template-columns: 4px minmax(0, 1fr); row-gap: 0.25rem; }
+  .strip .callsign-id,
+  .strip-title,
+  .strip .level { grid-column: 2; }
+  .strip-title { white-space: normal; }
+  .strip .drawn,
+  .pull-hint { display: none; }
+}
+
+/* ---- Sector three: the feed --------------------------------------------- */
+
+.feed { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+
+.change {
+  background: var(--cold-surface);
+  border: 1px solid var(--cold-line);
+  border-left: 3px solid rgba(122, 184, 255, 0.45);
+  border-radius: 0 6px 6px 0;
+  padding: 0.85rem 1.1rem;
+}
+
+.change-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.7rem;
+  font-size: 0.64rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin: 0 0 0.3rem;
+}
+
+.change-head .when { color: var(--accent); }
+.change-head .where { color: var(--muted); }
+.change-head .where::before { content: '·'; margin-right: 0.7rem; }
+
+.change .what { margin: 0 0 0.3rem; font-weight: 600; font-size: 0.98rem; }
+.change .why { margin: 0; font-size: 0.9rem; max-width: 72ch; }
+
+/* ---- The light table ---------------------------------------------------- */
+
+.plate {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+  background: radial-gradient(120% 90% at 50% 0%, #ffffff, #eef2f6 62%, #dfe6ee 100%);
+  cursor: grab;
+  touch-action: none;
+}
+
+.plate:active { cursor: grabbing; }
+
+.plate img {
+  max-width: 100%;
+  max-height: 66vh;
+  transform-origin: center center;
+  transition: transform 0.08s linear;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.plate-caption {
+  margin: 0;
+  padding: 0.85rem 1rem 1rem;
+  border-top: 1px solid var(--cold-line);
+  font-size: 0.9rem;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.caption-title { font-weight: 600; }
+
+@media (max-width: 620px) {
+  .window-backdrop { padding: 0.5rem; }
+  .plate img { max-height: 50vh; }
+  .controls .wide { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reticle .ring.outer { animation: none; }
+}

@@ -1,0 +1,56 @@
+<div class="room-library library">
+  <header class="stacks">
+    <div class="uprights" aria-hidden="true"></div>
+
+    <div class="wrap stacks-inner">
+      <p class="eyebrow">Library</p>
+      <h1>Notes from the work</h1>
+      <p class="lead muted">
+        Problems I hit, what the cause turned out to be, and what I learned. Mostly
+        networking, operations, and the systems I run at home. Filed by year, and written
+        while the detail was still fresh enough to be worth writing down.
+      </p>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="wrap">
+      @if (posts.length) {
+        @for (shelf of shelves; track shelf.year) {
+          <div class="shelf">
+            <h2 class="shelf-rule">
+              <span class="year mono">{{ shelf.year }}</span>
+              <span class="count mono">
+                {{ shelf.posts.length }} {{ shelf.posts.length === 1 ? 'entry' : 'entries' }}
+              </span>
+            </h2>
+
+            <ul class="list">
+              @for (p of shelf.posts; track p.slug) {
+                <li>
+                  <a class="entry" [routerLink]="['/library', p.slug]">
+                    <span class="spine" aria-hidden="true"></span>
+
+                    <p class="callnum mono">{{ callNumber(p) }}</p>
+                    <h3>{{ p.title }}</h3>
+                    <p class="filed mono">Filed {{ formatDate(p.date) }}</p>
+                    <p class="muted summary">{{ p.summary }}</p>
+
+                    <p class="subjects">
+                      <span class="subjects-label mono">subjects</span>
+                      @for (t of p.tags; track t) {
+                        <span class="tag">{{ t }}</span>
+                      }
+                    </p>
+                  </a>
+                </li>
+              }
+            </ul>
+          </div>
+        }
+      } @else {
+        <p class="empty muted">The shelf is empty. First entry is on the way.</p>
+      }
+    </div>
+  </section>
+</div>

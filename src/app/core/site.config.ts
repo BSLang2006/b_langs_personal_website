@@ -1,6 +1,8 @@
 // Single source for anything that is "about Brandon" rather than "about the site".
 export const site = {
   name: 'Brandon Lang',
+  // The building's name. `name` stays the person, for attribution and copyright.
+  brand: "B Lang's Citadel",
   tagline: 'Network operations, infrastructure, and the software that ties them together.',
   location: 'West Palm Beach, FL',
   email: 'BrandonScottLang@gmail.com',
@@ -10,15 +12,3 @@ export const site = {
   githubUrl: 'https://github.com/BSLang2006',
   linkedinUrl: 'https://www.linkedin.com/in/brandon-lang-596b78215',
 };
-
-// Giscus reads these from giscus.app after you enable Discussions on the repo.
-// Until repoId/categoryId are filled in, the comment box renders a setup notice
-// instead of a broken widget.
-export const giscus = {
-  repo: 'BSLang2006/personalWebsite',
-  repoId: '',
-  category: 'Announcements',
-  categoryId: '',
-};
-
-export const configured = (): boolean => !!giscus.repoId && !!giscus.categoryId;
