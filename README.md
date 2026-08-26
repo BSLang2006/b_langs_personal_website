@@ -10,7 +10,7 @@ Three rooms:
 
 [**Visit the site →**](https://brandonscottlang.com)
 
-![The Watchtower console](docs/watchtower.png)
+![The Watchtower console]
 
 ## Built with
 
