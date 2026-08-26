@@ -1,5 +1,7 @@
 .foot {
-  margin-top: 4rem;
+  /* Spacing above the footer belongs to the page content, not to the footer —
+     a margin here would push it off the bottom edge on a short page. */
+  margin-top: 0;
   border-top: 1px solid var(--line-solid);
   background: rgba(17, 24, 35, 0.5);
 }
@@ -8,7 +10,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 2.5rem;
-  padding-top: 2.5rem;
+  padding-top: 3.75rem;
   padding-bottom: 1.5rem;
 }
 

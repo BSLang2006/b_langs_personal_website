@@ -47,22 +47,97 @@
 @media (max-width: 760px) {
   .masthead .lead { text-align: left; }
 }
-
 /* ---- The console -------------------------------------------------------- */
 
+/* The stage owns the perspective; the deck is the surface that tilts inside it.
+   Depth comes from four planes at different translateZ rather than from any
+   image — a photographic console under vector linework reads as a compositing
+   mismatch, and a photo cannot retint, cannot respond to state, and cannot
+   reflow. Everything here is CSS and SVG. */
+
 .console-section {
-  padding: 1rem 0 4.5rem;
+  padding: 0.5rem 0 4rem;
 }
 
-.console {
+.stage {
+  position: relative;
+  perspective: 1500px;
+  perspective-origin: 50% 22%;
+}
+
+.deck {
   position: relative;
   width: 100%;
-  aspect-ratio: 1000 / 400;
+  aspect-ratio: 1000 / 486;
+  transform-style: preserve-3d;
+  /* Fixed tilt. It is what makes this a surface you are above rather than a
+     picture of one, and 16 degrees is close to the limit before text on the
+     deck starts to smear — the controls counter-rotate back to square, and
+     everything else stays on the plane. The deck does not respond to the
+     pointer: a panel that tips when you move the mouse reads as a toy, and the
+     depth is already carried by the planes. */
+  transform: rotateX(16deg);
+}
+
+/* ---- Plane 0: the panel ------------------------------------------------- */
+
+.panel-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(24, 38, 56, 0.9), rgba(8, 14, 22, 0.94));
+  border: 1px solid rgba(122, 184, 255, 0.18);
+  /* Bevel: light catching the top edge, the body falling away underneath, and a
+     contact shadow off the front lip so it sits on something. */
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    inset 0 -60px 80px -60px rgba(0, 0, 0, 0.9),
+    0 30px 60px -30px rgba(0, 0, 0, 0.9),
+    0 2px 0 rgba(122, 184, 255, 0.10);
+}
+
+/* Etched grid, dense and low contrast. It reads as machined surface and gives
+   the parallax something to slide against. */
+.panel-face .grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(122, 184, 255, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(122, 184, 255, 0.055) 1px, transparent 1px);
+  background-size: 46px 46px;
+  mask-image: radial-gradient(90% 80% at 50% 30%, #000 30%, transparent 78%);
+}
+
+/* One specular band across the glass. Static on purpose — a highlight that
+   travels across a stationary panel reads as a screensaver. */
+.panel-face .specular {
+  position: absolute;
+  inset: -30% -10%;
+  background: linear-gradient(
+    104deg,
+    transparent 34%,
+    rgba(190, 220, 255, 0.07) 46%,
+    rgba(190, 220, 255, 0.11) 50%,
+    rgba(190, 220, 255, 0.07) 54%,
+    transparent 66%
+  );
+}
+
+/* ---- Plane 1: the drawing ----------------------------------------------- */
+
+/* Sits just off the panel so the etched arc separates from the surface under
+   parallax instead of being painted onto it. */
+.figure-layer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 82.3%;
+  transform: translateZ(26px);
 }
 
 .figure {
-  position: absolute;
-  inset: 0;
   width: 100%;
   height: 100%;
   overflow: visible;
@@ -85,11 +160,7 @@
   stroke-width: 1;
 }
 
-.ticks line.long {
-  stroke: rgba(122, 184, 255, 0.55);
-}
-
-/* ---- Sector bands ------------------------------------------------------- */
+.ticks line.long { stroke: rgba(122, 184, 255, 0.55); }
 
 .sector-figure .band {
   fill: none;
@@ -111,15 +182,13 @@
 .sector-figure.lit .band {
   stroke: var(--accent);
   stroke-width: 18;
-  filter: drop-shadow(0 0 10px var(--glow));
+  filter: drop-shadow(0 0 12px var(--glow));
 }
 
 .sector-figure.lit .spoke {
   stroke: rgba(122, 184, 255, 0.5);
   stroke-dasharray: none;
 }
-
-/* ---- The operator ------------------------------------------------------- */
 
 .reticle .ring {
   fill: none;
@@ -144,29 +213,153 @@
 }
 
 /* The centre reports the exception, not the average. */
-.reticle.watch .core { fill: var(--amber); filter: drop-shadow(0 0 10px rgba(242, 181, 68, 0.6)); }
-.reticle.degraded .core { fill: #ff6b5e; filter: drop-shadow(0 0 12px rgba(255, 107, 94, 0.7)); }
+.reticle.watch .core {
+  fill: var(--amber);
+  filter: drop-shadow(0 0 10px rgba(242, 181, 68, 0.6));
+}
+.reticle.degraded .core {
+  fill: #ff6b5e;
+  filter: drop-shadow(0 0 12px rgba(255, 107, 94, 0.7));
+}
 
 @keyframes turn {
   to { transform: rotate(360deg); }
 }
 
-/* ---- Sector buttons ----------------------------------------------------- */
+/* ---- Plane 2: the readout rail ------------------------------------------ */
+
+/* Across the front of the deck, where a real console puts its readouts. */
+.rail {
+  position: absolute;
+  left: 3%;
+  right: 3%;
+  bottom: 3.5%;
+  height: 14%;
+  display: flex;
+  align-items: stretch;
+  gap: 0.6rem;
+  transform: translateZ(44px);
+}
+
+.rail .callsign {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.2rem;
+  margin: 0;
+  padding: 0 0.9rem 0 0;
+  border-right: 1px solid rgba(122, 184, 255, 0.18);
+  white-space: nowrap;
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.rail .callsign .id { color: #a9bccf; }
+.rail .callsign .status.nominal { color: var(--accent); }
+.rail .callsign .status.watch { color: #e0bd7f; }
+.rail .callsign .status.degraded { color: #ff9d94; }
+
+/* A gauge: label and value above, trace below, corner brackets framing it —
+   the habit of bracketing a readout rather than boxing it. */
+.gauge {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.35rem 0.55rem;
+  background: linear-gradient(180deg, rgba(122, 184, 255, 0.05), transparent);
+}
+
+.gauge figcaption {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.56rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.gauge-label { color: rgba(139, 155, 176, 0.9); }
+.gauge-value { color: var(--accent); letter-spacing: 0.08em; }
+.gauge-value .unit { color: rgba(139, 155, 176, 0.75); margin-left: 0.15em; }
+
+.gauge svg {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+}
+
+.gauge .line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.4;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 0 5px var(--glow));
+}
+
+.gauge .area {
+  fill: rgba(122, 184, 255, 0.10);
+  stroke: none;
+}
+
+/* Corner brackets, used on gauges and sector buttons alike. */
+.bracket {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border: 1px solid rgba(122, 184, 255, 0.5);
+  pointer-events: none;
+}
+
+.bracket.tl { top: 0; left: 0; border-right: 0; border-bottom: 0; }
+.bracket.br { bottom: 0; right: 0; border-left: 0; border-top: 0; }
+
+.rail .mock {
+  align-self: flex-end;
+  margin: 0 0 0.2rem;
+  white-space: nowrap;
+  font-size: 0.54rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(139, 155, 176, 0.6);
+}
+
+/* ---- Plane 3: the controls ---------------------------------------------- */
+
+/* Highest plane, and the only one that does not lie flat on the deck: each
+   control counter-rotates back to square so its label stays fully legible while
+   the surface under it tilts away. */
+.controls-layer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 82.3%;
+  transform: translateZ(76px);
+  transform-style: preserve-3d;
+}
 
 .sector {
   position: absolute;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) rotateX(-16deg);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.2rem;
-  padding: 0.5rem 0.9rem;
+  padding: 0.5rem 1.1rem;
   background: none;
   border: 0;
   cursor: pointer;
   color: inherit;
   transition: transform 0.25s ease;
 }
+
+.sector .bracket { opacity: 0; transition: opacity 0.25s ease; }
 
 .sector-label {
   font-size: 0.72rem;
@@ -183,10 +376,15 @@
   transition: text-shadow 0.25s ease;
 }
 
+/* Approaching a sector lifts it further off the deck. */
 .sector:hover,
 .sector:focus-visible {
-  transform: translate(-50%, -50%) scale(1.04);
+  transform: translate(-50%, -50%) rotateX(-16deg) translateZ(14px);
 }
+
+.sector:hover .bracket,
+.sector:focus-visible .bracket,
+.sector.active .bracket { opacity: 1; }
 
 .sector:hover .sector-label,
 .sector:focus-visible .sector-label,
@@ -201,39 +399,229 @@
   text-shadow: 0 0 18px var(--glow);
 }
 
-.callsign {
+/* ---- The projection ----------------------------------------------------- */
+
+/* Hovering a sector projects a panel above the deck carrying that sector's
+   numbers. It borrows the landing page instrument panel's housing on purpose —
+   bezel, strip header, scanlines — so the two consoles read as the same
+   equipment. It sits highest of anything on the deck and counter-rotates back
+   to square, like the controls. */
+.projection {
   position: absolute;
   left: 50%;
-  bottom: -0.25rem;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin: 0;
-  white-space: nowrap;
-  font-size: 0.66rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
+  top: 63%;
+  width: min(46%, 460px);
+  transform: translate(-50%, -50%) rotateX(-16deg) translateZ(38px);
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: 10px;
+  border: 1px solid rgba(122, 184, 255, 0.35);
+  background: linear-gradient(180deg, rgba(18, 30, 45, 0.97), rgba(8, 14, 22, 0.97));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 26px 60px -26px rgba(0, 0, 0, 0.95),
+    0 0 34px -14px var(--glow);
+  animation: project 0.18s ease-out both;
 }
 
-.callsign .id { color: #a9bccf; }
-.callsign .sep { width: 1px; height: 10px; background: var(--cold-line); }
-.callsign .hint { color: rgba(139, 155, 176, 0.7); }
-.callsign .status.nominal { color: var(--accent); }
-.callsign .status.watch { color: #e0bd7f; }
-.callsign .status.degraded { color: #ff9d94; }
+/* Comes up rather than fading in — a projection has a throw. */
+@keyframes project {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotateX(-16deg) translateZ(10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotateX(-16deg) translateZ(38px) scale(1);
+  }
+}
 
-/* An arc needs width. Below the breakpoint it flattens into three plates that
-   speak the same language — label, count, lit edge — without the geometry. */
+/* Scanlines, same trick as the landing panel. */
+.projection::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.02) 0 1px,
+    transparent 1px 3px
+  );
+}
+
+.proj-strip {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 0.7rem;
+  border-bottom: 1px solid rgba(122, 184, 255, 0.2);
+  background: rgba(122, 184, 255, 0.06);
+  font-size: 0.58rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.proj-id { color: var(--accent); }
+.proj-sep { flex: 1; height: 1px; background: rgba(122, 184, 255, 0.2); }
+
+.proj-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #a9bccf;
+}
+
+.proj-live i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--glow);
+}
+
+.proj-body {
+  padding: 0.7rem 0.8rem 0.5rem;
+}
+
+/* The big readout, the way a gauge states its number before its detail. */
+.proj-figure {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  margin: 0 0 0.6rem;
+}
+
+.figure-value {
+  font-size: 1.7rem;
+  line-height: 1;
+  color: var(--accent);
+  text-shadow: 0 0 18px var(--glow);
+}
+
+.figure-unit {
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.figure-note {
+  margin-left: auto;
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #a9bccf;
+}
+
+.proj-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.28rem;
+  border-top: 1px solid rgba(122, 184, 255, 0.14);
+  padding-top: 0.55rem;
+}
+
+.proj-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.76rem;
+  color: #c2d2e2;
+}
+
+.proj-list .dot {
+  flex: none;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(122, 184, 255, 0.45);
+}
+
+/* Station lamps keep the board's colour language exactly. */
+.proj-list .nominal .dot { background: var(--accent); box-shadow: 0 0 7px var(--glow); }
+.proj-list .watch .dot { background: var(--amber); box-shadow: 0 0 7px rgba(242, 181, 68, 0.7); }
+.proj-list .degraded .dot { background: #ff6b5e; box-shadow: 0 0 8px rgba(255, 107, 94, 0.8); }
+.proj-list .planned .dot { background: transparent; border: 1px solid var(--muted); }
+
+.proj-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.proj-state {
+  margin-left: auto;
+  flex: none;
+  font-size: 0.56rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.proj-foot {
+  margin: 0;
+  padding: 0.4rem 0.8rem 0.55rem;
+  border-top: 1px solid rgba(122, 184, 255, 0.14);
+  text-align: right;
+  font-size: 0.54rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(139, 155, 176, 0.7);
+}
+
+/* ---- Grounding ---------------------------------------------------------- */
+
+/* Light the deck throws onto the floor in front of it. Without this the panel
+   floats in a void; with it, it sits in a room. */
+.pool {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: -7%;
+  height: 26%;
+  pointer-events: none;
+  background: radial-gradient(60% 100% at 50% 0%, rgba(122, 184, 255, 0.16), transparent 72%);
+  filter: blur(14px);
+}
+
+.hint {
+  margin: 1.4rem 0 0;
+  text-align: center;
+  font-size: 0.62rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(139, 155, 176, 0.65);
+}
+
+/* ---- Flattening --------------------------------------------------------- */
+
+/* An arc needs width and a tilt needs depth. Below the breakpoint both are
+   dropped and the sectors become plates carrying the same label, count and lit
+   edge, with the rail keeping its traces underneath. */
 @media (max-width: 760px) {
-  .console {
+  .stage { perspective: none; }
+
+  .deck {
     aspect-ratio: auto;
+    transform: none;
     display: grid;
     gap: 0.6rem;
-    padding-bottom: 2.25rem;
+    padding: 0.9rem;
   }
 
-  .figure { display: none; }
+  .panel-face,
+  .figure-layer { display: none; }
+
+  .controls-layer {
+    position: static;
+    height: auto;
+    transform: none;
+    display: grid;
+    gap: 0.6rem;
+  }
 
   .sector {
     position: static;
@@ -252,7 +640,24 @@
   .sector:hover,
   .sector:focus-visible { transform: none; border-left-color: var(--accent); }
 
-  .callsign { bottom: 0; }
+  .rail {
+    position: static;
+    height: 4.5rem;
+    transform: none;
+    border-top: 1px solid var(--cold-line);
+    padding-top: 0.6rem;
+  }
+
+  .rail .callsign { display: none; }
+  .pool { display: none; }
+  /* No pointer to hover with, and the window is one tap away. */
+  .projection { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reticle .ring.outer { animation: none; }
+  /* The projection still appears, it just stops flying in. */
+  .projection { animation: none; }
 }
 
 /* ---- The window --------------------------------------------------------- */

@@ -18,71 +18,172 @@
 
   <section class="console-section">
     <div class="wrap">
-      <div class="console">
-        <svg class="figure" viewBox="0 0 1000 400" aria-hidden="true" focusable="false">
-          <!-- Outer edge and its bearing graduations -->
-          <path class="outline" [attr.d]="outline" />
-          <path class="inner-line" [attr.d]="innerLine" />
+      <!-- The stage owns the perspective; the deck is the surface that tilts
+           inside it. Everything below is a plane at a different translateZ, so
+           the parts sit at real depths rather than being painted on. The tilt is
+           fixed — it is a composition, not a thing that reacts to the pointer. -->
+      <div class="stage">
+        <div class="deck">
+          <!-- Plane 0: the panel itself -->
+          <div class="panel-face" aria-hidden="true">
+            <span class="grid"></span>
+            <span class="specular"></span>
+          </div>
 
-          <g class="ticks">
-            @for (t of ticks; track $index) {
-              <line
-                [class.long]="t.long"
-                [attr.x1]="t.x1"
-                [attr.y1]="t.y1"
-                [attr.x2]="t.x2"
-                [attr.y2]="t.y2"
-              />
+          <!-- Plane 1: the drawing etched into it -->
+          <div class="figure-layer" aria-hidden="true">
+            <svg class="figure" viewBox="0 0 1000 400" focusable="false">
+              <path class="outline" [attr.d]="outline" />
+              <path class="inner-line" [attr.d]="innerLine" />
+
+              <g class="ticks">
+                @for (t of ticks; track $index) {
+                  <line
+                    [class.long]="t.long"
+                    [attr.x1]="t.x1"
+                    [attr.y1]="t.y1"
+                    [attr.x2]="t.x2"
+                    [attr.y2]="t.y2"
+                  />
+                }
+              </g>
+
+              @for (s of sectors; track s.id) {
+                <g class="sector-figure" [class.lit]="lit() === s.id || sector() === s.id">
+                  <path class="spoke" [attr.d]="s.spoke" />
+                  <path class="band" [attr.d]="s.band" />
+                </g>
+              }
+
+              <g class="reticle" [class]="overall()">
+                <circle class="ring outer" cx="500" cy="340" r="34" />
+                <circle class="ring mid" cx="500" cy="340" r="21" />
+                <circle class="core" cx="500" cy="340" r="7" />
+                <line x1="500" y1="292" x2="500" y2="312" />
+                <line x1="452" y1="340" x2="472" y2="340" />
+                <line x1="528" y1="340" x2="548" y2="340" />
+              </g>
+            </svg>
+          </div>
+
+          <!-- Plane 2: readouts standing just off the surface -->
+          <div class="rail">
+            <p class="callsign mono">
+              <span class="id">BSL-01</span>
+              <span class="status" [class]="overall()">{{ stateLabels[overall()] }}</span>
+            </p>
+
+            @for (i of instruments; track i.label) {
+              <figure class="gauge">
+                <figcaption class="mono">
+                  <span class="gauge-label">{{ i.label }}</span>
+                  <span class="gauge-value">{{ i.value }}<span class="unit">{{ i.unit }}</span></span>
+                </figcaption>
+                <svg viewBox="0 0 120 34" preserveAspectRatio="none" aria-hidden="true">
+                  <path class="area" [attr.d]="i.area" />
+                  <polyline class="line" [attr.points]="i.line" />
+                </svg>
+                <span class="bracket tl" aria-hidden="true"></span>
+                <span class="bracket br" aria-hidden="true"></span>
+              </figure>
             }
-          </g>
 
-          <!-- One band and one spoke per sector, lit from the component -->
-          @for (s of sectors; track s.id) {
-            <g class="sector-figure" [class.lit]="lit() === s.id || sector() === s.id">
-              <path class="spoke" [attr.d]="s.spoke" />
-              <path class="band" [attr.d]="s.band" />
-            </g>
-          }
+            <p class="mock mono">mock · not wired</p>
+          </div>
 
-          <!-- The operator, at the centre of the arc -->
-          <g class="reticle" [class]="overall()">
-            <circle class="ring outer" cx="500" cy="340" r="34" />
-            <circle class="ring mid" cx="500" cy="340" r="21" />
-            <circle class="core" cx="500" cy="340" r="7" />
-            <line x1="500" y1="292" x2="500" y2="312" />
-            <line x1="452" y1="340" x2="472" y2="340" />
-            <line x1="528" y1="340" x2="548" y2="340" />
-          </g>
-        </svg>
+          <!-- Plane 3: the controls, floating above the glass and counter-
+               rotated so the labels stay square to the reader -->
+          <div class="controls-layer">
+            <!-- Projected above the deck while a sector is under the pointer.
+                 Same housing language as the landing page's instrument panel:
+                 bezel, strip header, scanlines. Hidden from assistive tech —
+                 every number in it is also in the window the sector opens. -->
+            @if (preview(); as id) {
+              <div class="projection" aria-hidden="true">
+                <div class="proj-strip mono">
+                  <span class="proj-id">{{ previewLabel() }}</span>
+                  <span class="proj-sep"></span>
+                  <span class="proj-live"><i></i>standby</span>
+                </div>
 
-        <!-- Real buttons, layered over the drawing so the sectors stay
-             focusable and keyboard-reachable. -->
-        @for (s of sectors; track s.id) {
-          <button
-            class="sector"
-            type="button"
-            [class.active]="sector() === s.id"
-            [style.left]="s.left"
-            [style.top]="s.top"
-            (pointerenter)="lit.set(s.id)"
-            (pointerleave)="lit.set(null)"
-            (focus)="lit.set(s.id)"
-            (blur)="lit.set(null)"
-            (click)="openSector(s.id)"
-          >
-            <span class="sector-label mono">{{ s.label }}</span>
-            <span class="sector-count mono">{{ count(s.id) }}</span>
-          </button>
-        }
+                <div class="proj-body">
+                  @if (headline(); as h) {
+                    <p class="proj-figure mono">
+                      <span class="figure-value">{{ h.value }}</span>
+                      <span class="figure-unit">{{ h.unit }}</span>
+                      <span class="figure-note">{{ h.note }}</span>
+                    </p>
+                  }
 
-        <p class="callsign mono">
-          <span class="id">BSL-01</span>
-          <span class="sep" aria-hidden="true"></span>
-          <span class="status" [class]="overall()">{{ stateLabels[overall()] }}</span>
-          <span class="sep" aria-hidden="true"></span>
-          <span class="hint">tap a sector</span>
-        </p>
+                  @switch (id) {
+                    @case ('systems') {
+                      <ul class="proj-list">
+                        @for (s of stations; track s.name) {
+                          <li [class]="s.state">
+                            <span class="dot"></span>
+                            <span class="proj-name">{{ s.name }}</span>
+                            <span class="proj-state mono">{{ stateLabels[s.state] }}</span>
+                          </li>
+                        }
+                      </ul>
+                    }
+                    @case ('architecture') {
+                      <ul class="proj-list">
+                        @for (d of drawers(); track d.system) {
+                          <li>
+                            <span class="dot"></span>
+                            <span class="proj-name">{{ d.system }}</span>
+                            <span class="proj-state mono">{{ d.diagrams.length }} drawing(s)</span>
+                          </li>
+                        } @empty {
+                          <li><span class="proj-name">Cabinet empty</span></li>
+                        }
+                      </ul>
+                    }
+                    @default {
+                      <ul class="proj-list">
+                        @for (c of changes.slice(0, 3); track c.date + c.what) {
+                          <li>
+                            <span class="dot"></span>
+                            <span class="proj-name">{{ c.what }}</span>
+                            <span class="proj-state mono">{{ c.date }}</span>
+                          </li>
+                        }
+                      </ul>
+                    }
+                  }
+                </div>
+
+                <p class="proj-foot mono">click to open</p>
+              </div>
+            }
+
+            @for (s of sectors; track s.id) {
+              <button
+                class="sector"
+                type="button"
+                [class.active]="sector() === s.id"
+                [style.left]="s.left"
+                [style.top]="s.top"
+                (pointerenter)="lit.set(s.id)"
+                (pointerleave)="lit.set(null)"
+                (focus)="lit.set(s.id)"
+                (blur)="lit.set(null)"
+                (click)="openSector(s.id)"
+              >
+                <span class="bracket tl" aria-hidden="true"></span>
+                <span class="sector-label mono">{{ s.label }}</span>
+                <span class="sector-count mono">{{ count(s.id) }}</span>
+                <span class="bracket br" aria-hidden="true"></span>
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="pool" aria-hidden="true"></div>
       </div>
+
+      <p class="hint mono">tap a sector</p>
     </div>
   </section>
 </div>

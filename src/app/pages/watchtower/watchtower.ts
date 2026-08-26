@@ -58,6 +58,70 @@ interface Change {
   why: string;
 }
 
+// ---- The readout rail ------------------------------------------------------
+
+/* MOCK DATA. These three traces are generated, not measured — the rail is
+   labelled as such on the page. The seam for wiring them to something real is
+   `points`: replace the generator below with the actual samples and nothing
+   else in the component or the template has to change. */
+interface Instrument {
+  label: string;
+  unit: string;
+  value: string;
+  /* Polyline points and the matching filled area, in the 120x34 box the rail
+     panels draw into. */
+  line: string;
+  area: string;
+}
+
+const TRACE_W = 120;
+const TRACE_H = 34;
+const TRACE_PAD = 3;
+
+/* Seeded so the server and the browser generate byte-identical traces. An
+   unseeded Math.random() here would draw one shape during prerender and a
+   different one on hydration, and Angular would report the mismatch. */
+function seeded(seed: number): () => number {
+  let a = seed;
+  return () => {
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/* A bounded random walk — drifts like a real reading rather than jittering like
+   noise, and never pins to the top or bottom of the panel. */
+function trace(seed: number, samples = 44): number[] {
+  const rand = seeded(seed);
+  let v = 0.5;
+  return Array.from({ length: samples }, () => {
+    v = Math.min(0.92, Math.max(0.08, v + (rand() - 0.5) * 0.24));
+    return v;
+  });
+}
+
+function instrument(label: string, unit: string, seed: number, scale: number): Instrument {
+  const values = trace(seed);
+  const span = TRACE_H - TRACE_PAD * 2;
+  const points = values
+    .map((v, i) => {
+      const x = (i / (values.length - 1)) * TRACE_W;
+      const y = TRACE_H - TRACE_PAD - v * span;
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    })
+    .join(' ');
+
+  return {
+    label,
+    unit,
+    value: (values.at(-1)! * scale).toFixed(scale >= 100 ? 0 : 1),
+    line: points,
+    area: `M 0,${TRACE_H} L ${points.replace(/ /g, ' L ')} L ${TRACE_W},${TRACE_H} Z`,
+  };
+}
+
 // ---- Arc geometry ----------------------------------------------------------
 
 /* The console is drawn in a 1000x400 viewBox with the operator standing at
@@ -150,6 +214,42 @@ export class Watchtower {
      driven from here rather than from CSS sibling selectors, so hover and focus
      behave identically. */
   readonly lit = signal<SectorId | null>(null);
+
+  /* The preview panel projected above the deck while a sector is under the
+     pointer. It never shows over an open window — once the detail is up, a
+     hover preview of the same thing is noise. Everything it shows is also in
+     the window, so it is hidden from assistive tech rather than read twice. */
+  readonly preview = computed(() => (this.sector() ? null : this.lit()));
+
+  /* sectorLabel() follows the open window, which is closed while previewing —
+     the panel needs the hovered sector's name instead. */
+  readonly previewLabel = computed(
+    () => this.sectors.find((s) => s.id === this.preview())?.label ?? '',
+  );
+
+  /* One line of headline per sector, in the panel's big readout. */
+  readonly headline = computed(() => {
+    switch (this.preview()) {
+      case 'systems':
+        return { value: String(this.count('systems')), unit: 'stations', note: this.stateLabels[this.overall()] };
+      case 'architecture':
+        return { value: String(this.count('architecture')), unit: 'filed', note: `${this.drawers().length} drawer(s)` };
+      case 'changes':
+        return { value: String(this.count('changes')), unit: 'logged', note: `latest ${this.changes[0]?.date ?? '—'}` };
+      default:
+        return null;
+    }
+  });
+
+  // ---- The rail -----------------------------------------------------------
+
+  /* MOCK — see the note on `Instrument`. Swap these three for real samples when
+     the telemetry is wired; the template does not care where they came from. */
+  readonly instruments: Instrument[] = [
+    instrument('Load', '%', 20260826, 100),
+    instrument('Bus', 'msg/s', 76314, 40),
+    instrument('Link', 'ms', 5150, 12),
+  ];
 
   // ---- Sector one ---------------------------------------------------------
 

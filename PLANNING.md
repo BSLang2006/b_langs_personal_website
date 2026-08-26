@@ -305,3 +305,72 @@ Note the encapsulation trap, same as the Library's post bodies: markdown injecte
 `[innerHTML]` carries no component attribute, so its styling lives under `:host ::ng-deep`
 in `forge.scss`. A plain `.body p` rule there would compile to `.body p[_ngcontent-x]`
 and match nothing.
+
+---
+
+## Build decisions — 2026-08-26, console branch
+
+### Depth without images
+
+The console read flat. The fix was **not** photography, and that was the important
+call: the whole site ships zero raster imagery and carries every room's identity through
+material and light in CSS. A photographic console under vector linework reads as a
+compositing mismatch, and a photo cannot retint to the room accent, cannot respond to
+state, and cannot reflow. The Stark/LCARS reference is not photographic either — it is
+emissive vector linework on dark glass.
+
+So the depth is built from four planes inside a `perspective` container, tilted 16°:
+
+- **Plane 0** the panel — bevel, etched grid, one static specular band, contact shadow.
+- **Plane 1** (+26px) the arc drawing, so it separates from the surface rather than
+  looking painted onto it.
+- **Plane 2** (+44px) the readout rail across the front, where a real console puts them.
+- **Plane 3** (+76px) the sector controls, each **counter-rotated -16°** so the labels
+  stay square to the reader while the surface beneath them tilts away. Past roughly 18°
+  text on a tilted plane starts trading legibility for depth; this keeps both.
+
+**Pointer parallax** is a few degrees of rotation tracking the cursor. It is doing more
+work than any of the shading — motion parallax resolves as depth before shading does.
+Two custom properties on the deck carry it, so the whole effect is one `transform`.
+
+`three.js` was considered and rejected: 150kB+, and it would break the prerender-to-
+static-HTML property the entire site depends on, to orbit a console nobody needs to
+orbit.
+
+### The rail is mock, and says so
+
+Three traces, seeded rather than random — an unseeded generator would draw one shape
+during prerender and a different one on hydration, and Angular would report the
+mismatch. The rail carries a `mock · not wired` label, and the seam for real data is a
+single array: replace the samples and neither the component nor the template changes.
+
+### Not free
+
+`prefers-reduced-motion` drops the parallax but keeps the resting tilt, which is a static
+composition rather than an animation. Below 760px perspective is switched off entirely
+and the deck flattens to plates — an arc needs width and a tilt needs depth. The
+component style budget in `angular.json` went from 12kB to 18kB; this room is legitimately
+the most graphics-heavy thing on the site.
+
+### Console revisions (same day)
+
+- **Sticky footer, site-wide.** The app host is a flex column at `min-height: 100dvh`
+  with the router outlet taking the slack, so a short page — the Watchtower console is
+  deliberately short — puts the footer on the bottom edge instead of leaving it floating
+  with dead space beneath. It is *not* fixed: long pages scroll it away normally. The
+  footer's 4rem outer margin became inner padding, because a margin there would have
+  pushed it past the bottom edge and reintroduced a scrollbar on short pages. `100dvh`
+  rather than `100vh` so mobile browsers do not measure past their collapsing chrome.
+
+- **The pointer parallax is gone.** It read as wobble rather than depth. The fixed 16°
+  tilt and the four translateZ planes carry the effect on their own; a panel that tips
+  when the mouse moves reads as a toy. The per-sector hover lift stays — that one is a
+  control responding to being approached, not the whole room moving.
+
+- **Hovering a sector projects a panel** carrying that sector's numbers, in the landing
+  page instrument panel's housing — bezel, strip header, scanlines — so the two consoles
+  read as the same equipment. It sits highest on the deck, counter-rotated to square, and
+  throws forward on appear rather than fading. It never shows over an open window, since
+  a hover preview of what is already open is noise, and it is `aria-hidden` because every
+  number in it is also in the window the sector opens. Hidden entirely below the mobile
+  breakpoint, where there is no pointer and the window is one tap away.

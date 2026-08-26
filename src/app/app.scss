@@ -1,1 +1,20 @@
-:host { display: block; min-height: 100vh; }
+/* Sticky footer. The host is a column at least as tall as the viewport and the
+   router outlet takes the slack, so a short page — the Watchtower console is
+   deliberately short — puts the footer on the bottom edge instead of leaving it
+   floating halfway up. It is not fixed: on a long page it scrolls away normally.
+
+   100dvh rather than 100vh so mobile browsers do not measure the viewport as if
+   their collapsing address bar were not there. */
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+main {
+  flex: 1 0 auto;
+}
+
+app-footer {
+  flex: none;
+}
