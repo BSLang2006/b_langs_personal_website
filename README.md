@@ -10,8 +10,6 @@ Three rooms:
 
 [**Visit the site →**](https://brandonscottlang.com)
 
-[The Watchtower console]
-
 ## Built with
 
 Angular 22, prerendered to static HTML at build time. Content authored as
