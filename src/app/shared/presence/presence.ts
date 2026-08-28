@@ -8,6 +8,10 @@ import { Component, input } from '@angular/core';
    same path. If you change one, change the other; the whole point is that a
    visitor recognises the same object in both places.
 
+   This is the site footer on both sites — there is no other one. It carries the
+   four properties, the attribution line, and the single contact link, and it is
+   docked to the bottom of the viewport at all times.
+
    The only per-site difference is `current`, passed in app.html, and the
    `--presence-accent` token each site sets once in its global stylesheet.
    ========================================================================== */
@@ -34,6 +38,12 @@ interface Node {
 export class Presence {
   /** Which of the four this site is. That node renders as here, not as a link. */
   readonly current = input.required<PresenceId>();
+
+  /* The person, not the site — identical on both, which is why it can live in
+     a shared component rather than being passed in. */
+  readonly owner = 'Brandon Lang';
+  readonly email = 'BrandonScottLang@gmail.com';
+  readonly year = new Date().getFullYear();
 
   readonly nodes: Node[] = [
     {

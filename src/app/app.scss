@@ -1,7 +1,7 @@
-/* Sticky footer. The host is a column at least as tall as the viewport and the
-   router outlet takes the slack, so a short page — the Watchtower console is
-   deliberately short — puts the footer on the bottom edge instead of leaving it
-   floating halfway up. It is not fixed: on a long page it scrolls away normally.
+/* The host is a column at least as tall as the viewport and the router outlet
+   takes the slack, so the presence strip — which is the footer now, there is no
+   other one — always lands on the bottom edge rather than floating halfway up a
+   short page. The strip itself is sticky, so it stays there while you scroll.
 
    100dvh rather than 100vh so mobile browsers do not measure the viewport as if
    their collapsing address bar were not there. */
@@ -15,6 +15,6 @@ main {
   flex: 1 0 auto;
 }
 
-app-footer {
+app-presence {
   flex: none;
 }

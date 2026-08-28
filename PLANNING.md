@@ -425,3 +425,30 @@ Sticky gets the entire behaviour in one declaration.
 Two of the four are not sites with a footer to edit. The same four links belong in
 the GitHub profile README (`BSLang2006/BSLang2006`) and the LinkedIn about or
 featured section, or half the entry points are dead ends.
+
+### The strip replaced the footer (same day)
+
+There is no footer on either site any more. The presence strip **is** the footer:
+it renders the `contentinfo` landmark, carries the attribution line and the one
+contact link, and stays docked to the bottom of the viewport at all times. Height
+is unchanged at ~65px — the constraint that decided what could survive.
+
+What did not survive, and why:
+
+- **Room / faculty links.** Both navbars are sticky at the top, so repeating the
+  destinations at the bottom was pure noise.
+- **Location.** Least useful thing at that size; it still appears on the Architect
+  page and in the landing hero.
+- **Argus's motto and eye mark.** Both are already carried by that site's navbar.
+
+**Colophon was rehomed.** It lived only in the Argus footer, so removing the
+footer would have orphaned `/colophon` entirely — it is now the fourth item in
+that site's primary nav.
+
+### "You are here" was reading as disabled
+
+The first version marked the current node with a dashed border and muted text,
+which is the visual language of *unavailable*, not *current*. It now lights like
+a selected tab: solid accent border, an accent wash behind it, a lit 2px edge
+along the top, a haloed pip and full-strength text. The other three sit on a
+plain hairline border with no fill, so the contrast is unmistakable.

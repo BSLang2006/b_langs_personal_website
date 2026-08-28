@@ -44,15 +44,27 @@
   backdrop-filter: blur(12px);
 }
 
-.presence__label {
+.presence__plate {
   flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding-right: 1.1rem;
+  border-right: 1px solid var(--p-line);
+}
+
+.presence__label,
+.presence__attrib {
   margin: 0;
   font-family: var(--p-mono);
   font-size: 0.6rem;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--p-mute);
+  white-space: nowrap;
 }
+
+.presence__label { color: var(--p-accent); }
+.presence__attrib { color: var(--p-mute); letter-spacing: 0.12em; }
 
 .presence__nodes {
   display: flex;
@@ -162,22 +174,89 @@ a.presence__tag:focus-visible .presence__claim {
   transform: translateY(0);
 }
 
+/* ---- Contact ------------------------------------------------------------- */
+
+/* Separated from the nodes by a rule so the four still read as four. */
+.presence__contact {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 15rem;
+  padding: 0.4rem 0 0.4rem 1.1rem;
+  border-left: 1px solid var(--p-line);
+  color: var(--p-mute);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.presence__contact:hover,
+.presence__contact:focus-visible {
+  color: var(--p-accent);
+  text-decoration: none;
+}
+
+.presence__contact-icon { font-size: 0.95rem; line-height: 1; }
+
+.presence__contact-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.presence__contact-label {
+  font-family: var(--p-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.presence__contact-value {
+  font-size: 0.72rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* ---- You are here -------------------------------------------------------- */
 
-/* Marked, not linked, and visibly not clickable — it orients as well as it
-   connects, which is the reason all four appear on all four. */
+/* Marked, not linked — it orients as well as it connects, which is why all four
+   appear on all four. The first version used a dashed border and muted text and
+   read as *disabled* rather than *current*; the fix is to light it like an
+   active tab instead of dimming it. */
 .is-here .presence__tag {
-  border-style: dashed;
-  color: var(--p-mute);
+  position: relative;
+  border-color: var(--p-accent);
+  background: color-mix(in srgb, var(--p-accent) 15%, transparent);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--p-accent) 35%, transparent),
+    0 0 22px -8px var(--p-accent);
+  color: var(--p-ink);
   cursor: default;
+}
+
+/* The lit edge along the top, the way a selected tab carries one. */
+.is-here .presence__tag::before {
+  content: '';
+  position: absolute;
+  inset: -1px -1px auto;
+  height: 2px;
+  border-radius: 6px 6px 0 0;
+  background: var(--p-accent);
+  box-shadow: 0 0 12px var(--p-accent);
 }
 
 .is-here .presence__mark {
   opacity: 1;
-  box-shadow: 0 0 10px var(--p-accent);
+  box-shadow: 0 0 10px var(--p-accent), 0 0 0 3px color-mix(in srgb, var(--p-accent) 22%, transparent);
 }
 
-.is-here .presence__kind { color: var(--p-accent); }
+.is-here .presence__name { color: var(--p-ink); }
+
+.is-here .presence__kind {
+  color: var(--p-accent);
+  font-weight: 600;
+}
 
 /* ---- Narrow -------------------------------------------------------------- */
 
@@ -187,7 +266,9 @@ a.presence__tag:focus-visible .presence__claim {
     padding: 0.5rem 1rem;
   }
 
-  .presence__label { display: none; }
+  .presence__plate,
+  .presence__contact-text { display: none; }
+  .presence__contact { padding-left: 0.7rem; }
   .presence__nodes { gap: 0.35rem; }
   .presence__tag { padding: 0.4rem 0.5rem; justify-content: center; }
   .presence__name { font-size: 0.72rem; }
