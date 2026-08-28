@@ -1,0 +1,29 @@
+<!-- SHARED COMPONENT — keep identical across both sites. See presence.ts. -->
+<div class="presence" aria-label="Elsewhere on the web">
+  <p class="presence__label mono">On the web</p>
+
+  <ul class="presence__nodes">
+    @for (n of nodes; track n.id) {
+      <li class="presence__node" [class.is-here]="n.id === current()">
+        @if (n.id === current()) {
+          <span class="presence__tag" aria-current="page">
+            <span class="presence__mark" aria-hidden="true"></span>
+            <span class="presence__text">
+              <span class="presence__name">{{ n.name }}</span>
+              <span class="presence__kind mono">you are here</span>
+            </span>
+          </span>
+        } @else {
+          <a class="presence__tag" [href]="n.href" rel="me noopener">
+            <span class="presence__mark" aria-hidden="true"></span>
+            <span class="presence__text">
+              <span class="presence__name">{{ n.name }}</span>
+              <span class="presence__kind mono">{{ n.kind }}</span>
+            </span>
+            <span class="presence__claim">{{ n.claim }}</span>
+          </a>
+        }
+      </li>
+    }
+  </ul>
+</div>

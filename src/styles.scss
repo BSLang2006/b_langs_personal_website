@@ -29,6 +29,11 @@
   --library: #2ee6c5;
   --library-soft: rgba(46, 230, 197, 0.12);
   --library-ink: #04231e;
+
+  /* The shared "on the web" strip is site chrome, not a room, so it burns the
+     hall's lamplight rather than any one room's accent. This is the single
+     token that differs between this site and Argus. */
+  --presence-accent: #e9e2d4;
   --radius: 12px;
   --maxw: 1120px;
 

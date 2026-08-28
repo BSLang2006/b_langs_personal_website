@@ -23,3 +23,11 @@ work, not restate the CV.
 ```bash
 npm install
 npm start   # http://localhost:4200
+```
+
+## On the web
+
+This site carries a shared **presence strip** listing all four of my properties —
+the Citadel, Argus, GitHub and LinkedIn — so a visitor landing on any one of them
+can reach the other three. `src/app/shared/presence/` is duplicated byte-for-byte
+in the Argus repository; see PLANNING.md before changing it.

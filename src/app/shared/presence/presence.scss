@@ -1,0 +1,203 @@
+/* SHARED COMPONENT — keep identical across both sites. See presence.ts.
+   ----------------------------------------------------------------------------
+   Every colour and face is read from a token with a fallback chain, so the same
+   file lands in two different design systems and wears each one. A site sets
+   --presence-accent once; the rest resolves on its own:
+
+     personal   --accent / --text / --muted / --line-solid / --surface / --mono / --maxw
+     Argus      --channel / --ink / --ink-mute / --line / --surface-1 / --font-mono / --shell-wide
+
+   Note the order on the line token: the personal site defines BOTH --line (fully
+   transparent, deliberately) and --line-solid, so --line-solid has to win there. */
+
+:host {
+  /* Docked to the bottom of the viewport from the moment the page loads, then
+     un-docked into its natural place above the footer once the end of the page
+     is reached. One line of CSS instead of scroll listeners, and nothing jumps.
+     Being visible on arrival is the entire point — a connector buried at the
+     bottom of a long page is a connector nobody uses. */
+  position: sticky;
+  bottom: 0;
+  z-index: 40;
+  display: block;
+  flex: none;
+}
+
+.presence {
+  --p-accent: var(--presence-accent, var(--channel, var(--accent, #7ab8ff)));
+  --p-ink: var(--ink, var(--text, #e6edf3));
+  --p-mute: var(--ink-mute, var(--muted, #8b9bb0));
+  --p-line: var(--line-solid, var(--line, #232830));
+  --p-surface: var(--surface-1, var(--surface, #0d0f13));
+  --p-mono: var(--font-mono, var(--mono, ui-monospace, monospace));
+
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  width: 100%;
+  max-width: var(--presence-measure, var(--maxw, var(--shell-wide, 1120px)));
+  margin: 0 auto;
+  padding: 0.6rem 1.25rem;
+  border-top: 1px solid var(--p-line);
+  /* Translucent, because while docked it sits over the page. */
+  background: color-mix(in srgb, var(--p-surface) 88%, transparent);
+  backdrop-filter: blur(12px);
+}
+
+.presence__label {
+  flex: none;
+  margin: 0;
+  font-family: var(--p-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--p-mute);
+}
+
+.presence__nodes {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.presence__node {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.presence__tag {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  height: 100%;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid var(--p-line);
+  border-radius: 6px;
+  color: var(--p-ink);
+  text-decoration: none;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+a.presence__tag:hover,
+a.presence__tag:focus-visible {
+  text-decoration: none;
+  border-color: var(--p-accent);
+  background: color-mix(in srgb, var(--p-accent) 8%, transparent);
+}
+
+/* A lit pip per node — the lamp language both sites already use. */
+.presence__mark {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--p-accent);
+  opacity: 0.4;
+  transition: opacity 0.2s ease, box-shadow 0.2s ease;
+}
+
+a.presence__tag:hover .presence__mark,
+a.presence__tag:focus-visible .presence__mark {
+  opacity: 1;
+  box-shadow: 0 0 10px var(--p-accent);
+}
+
+.presence__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.presence__name {
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.presence__kind {
+  font-family: var(--p-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--p-mute);
+}
+
+/* ---- The claim ----------------------------------------------------------- */
+
+/* The line that earns the click. There is no room for four of these in a docked
+   bar, so each one rises above its own node on hover or focus. Hidden with
+   opacity and visibility rather than display, so it stays in the accessibility
+   tree and is read out with the link whether or not it is on screen. */
+.presence__claim {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(100% + 0.5rem);
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--p-accent);
+  border-radius: 6px;
+  background: var(--p-surface);
+  box-shadow: 0 18px 40px -22px rgb(0 0 0 / 90%);
+  font-size: 0.78rem;
+  line-height: 1.35;
+  color: var(--p-ink);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(4px);
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+}
+
+a.presence__tag:hover .presence__claim,
+a.presence__tag:focus-visible .presence__claim {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* ---- You are here -------------------------------------------------------- */
+
+/* Marked, not linked, and visibly not clickable — it orients as well as it
+   connects, which is the reason all four appear on all four. */
+.is-here .presence__tag {
+  border-style: dashed;
+  color: var(--p-mute);
+  cursor: default;
+}
+
+.is-here .presence__mark {
+  opacity: 1;
+  box-shadow: 0 0 10px var(--p-accent);
+}
+
+.is-here .presence__kind { color: var(--p-accent); }
+
+/* ---- Narrow -------------------------------------------------------------- */
+
+@media (max-width: 900px) {
+  .presence {
+    gap: 0.7rem;
+    padding: 0.5rem 1rem;
+  }
+
+  .presence__label { display: none; }
+  .presence__nodes { gap: 0.35rem; }
+  .presence__tag { padding: 0.4rem 0.5rem; justify-content: center; }
+  .presence__name { font-size: 0.72rem; }
+  .presence__kind { display: none; }
+  /* No hover to reveal it with, and no room to show it. */
+  .presence__claim { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .presence__claim { transition: opacity 0.18s ease, visibility 0.18s; transform: none; }
+  a.presence__tag:hover .presence__claim,
+  a.presence__tag:focus-visible .presence__claim { transform: none; }
+}

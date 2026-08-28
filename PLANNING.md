@@ -374,3 +374,54 @@ the most graphics-heavy thing on the site.
   a hover preview of what is already open is noise, and it is `aria-hidden` because every
   number in it is also in the window the sector opens. Hidden entirely below the mobile
   breakpoint, where there is no pointer and the window is one tap away.
+
+---
+
+## Build decisions — 2026-08-28
+
+### One presence strip, carried by both sites
+
+`src/app/shared/presence/` is a **shared component that must stay identical in
+both repositories.** The canonical copy lives in this repo; the Argus repo carries
+a byte-identical copy at the same path. Verify with:
+
+    diff -r src/app/shared/presence \
+      ../b_langs_argus_website/blang-website/src/app/shared/presence
+
+It lists all four properties — the Citadel, Argus, GitHub, LinkedIn — so someone
+landing on any one of them can reach the other three. The node for the site you
+are standing on renders as *you are here* rather than as a link, so the strip
+orients as well as it connects. Each node carries one concrete line about what is
+actually there, revealed on hover, because four bare links tell a visitor nothing
+they could not guess and the point is to make the next click obvious.
+
+**Only two things differ per site:**
+
+1. `current` on `<app-presence>` in `app.html` — `"citadel"` here, `"argus"` there.
+2. `--presence-accent`, set once in the global stylesheet — ivory here, gold there.
+
+Everything else resolves through fallback chains against whatever tokens the host
+site defines, so one file wears two design systems with no mapping layer. Argus
+made this easy: its token file already aliases `--channel` and says outright that
+it exists "so shared components stay decoupled from the specific hue."
+
+One ordering trap is load-bearing: this site defines **both** `--line` (fully
+transparent, deliberately) and `--line-solid`, so the chain checks `--line-solid`
+first. Reverse them and the strip loses its border here and only here.
+
+### Docked, not buried
+
+The strip is `position: sticky; bottom: 0` — docked to the bottom of the viewport
+from the moment a page loads, un-docking into its natural place above the footer
+when you reach the end. Verified at both ends: 0px gap from the viewport bottom
+mid-scroll, and sitting exactly on the footer's top edge at the bottom, no overlap.
+
+A hide-on-scroll variant was considered and dropped. It needs scroll listeners,
+always feels jumpy, and hiding the one thing you want seen defeats the purpose.
+Sticky gets the entire behaviour in one declaration.
+
+### The loop only closes if all four ends carry it
+
+Two of the four are not sites with a footer to edit. The same four links belong in
+the GitHub profile README (`BSLang2006/BSLang2006`) and the LinkedIn about or
+featured section, or half the entry points are dead ends.
