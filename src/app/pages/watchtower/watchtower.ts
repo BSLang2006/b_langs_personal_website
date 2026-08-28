@@ -341,6 +341,14 @@ export class Watchtower {
      with the real ones before this goes out. Newest first. */
   readonly changes: Change[] = [
     {
+      date: '2026-08-27',
+      system: 'Me',
+      what: 'Passed the AWS Certified Cloud Practitioner exam',
+      why: 'My infrastructure is all self-hosted, so the shared responsibility ' +
+        'model and the service families were the part I had the least hands-on ' +
+        'time with. Now the gap is closed on paper; next it gets closed in the lab.',
+    },
+    {
       date: '2026-08-14',
       system: 'Fixtures',
       what: 'Device commands moved to retain off',

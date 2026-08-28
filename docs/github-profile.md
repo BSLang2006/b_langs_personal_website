@@ -47,8 +47,8 @@ solved by buying something, and didn't.
 
 ## Currently
 
-Working through CCNP Enterprise (ENCOR) and the AWS Cloud Practitioner exam, in
-the lab rather than on paper — standing scenarios up, breaking them on purpose,
+**AWS Certified Cloud Practitioner** (August 2026). Working through CCNP
+Enterprise (ENCOR) in the lab rather than on paper — standing scenarios up, breaking them on purpose,
 and writing down what the failure looked like from the outside before I knew the
 cause. That part is public, along with the problems in my own systems I have not
 solved yet.
