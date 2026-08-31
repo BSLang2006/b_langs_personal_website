@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240">
+  <!-- B Lang's Journal. Sibling to argus-mark.svg: same 240 field, same 48
+       corner radius, same dark tile with one accent colour — so the two read as
+       a set in a tab strip. Argus is an eye, because it watches. This is an
+       entry: a marker and three ruled lines, because this one records. -->
+  <rect width="240" height="240" rx="48" fill="#0d1117"/>
+
+  <!-- Bezel, echoing the rings on the Argus mark. -->
+  <rect x="14" y="14" width="212" height="212" rx="36" fill="none"
+        stroke="#7ab8ff" stroke-width="4" opacity="0.28"/>
+
+  <!-- The entry marker: the same lit pip used across the site. -->
+  <circle cx="62" cy="84" r="13" fill="#7ab8ff"/>
+
+  <!-- Three ruled lines. Lengths vary so it reads as written text rather than
+       as a menu glyph, and they fade down the way a page trails off. -->
+  <g fill="#7ab8ff">
+    <rect x="90" y="75" width="90" height="18" rx="9" opacity="0.95"/>
+    <rect x="56" y="120" width="128" height="16" rx="8" opacity="0.55"/>
+    <rect x="56" y="158" width="84" height="16" rx="8" opacity="0.32"/>
+  </g>
+</svg>

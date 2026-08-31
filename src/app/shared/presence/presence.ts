@@ -54,7 +54,7 @@ export class Presence {
   readonly nodes: Node[] = [
     {
       id: 'journal',
-      name: 'Brandon Lang',
+      name: "B Lang's Journal",
       short: 'Journal',
       kind: 'journal',
       claim: 'What I am building, and what broke along the way.',
