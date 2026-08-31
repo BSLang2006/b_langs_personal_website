@@ -1,144 +1,76 @@
-/* Dark-only placeholder theme: one accent, one warm secondary. Palette is
-   deliberately provisional — PLANNING.md defers brand identity. */
+/* Every colour, size and font on the site is set here. Change one of these and
+   it changes everywhere. */
 :root {
-  --bg: #0a0e13;
-  --surface: #111823;
-  --surface-2: #16202e;
-  --line: #22304400;
-  --line-solid: #223044;
-  --text: #e6edf3;
-  --muted: #8b9bb0;
-  --accent: #2ee6c5;
-  --accent-soft: rgba(46, 230, 197, 0.12);
-  --accent-ink: #04231e;
-  --amber: #f2b544;
+  --bg: #0d1117;
+  --text: #e7edf4;
+  --muted: #8b98a9;
+  --faint: #5d6874;
+  --accent: #7ab8ff;
+  --line: #1e2530;
 
-  /* Room accents. The site is one building with three rooms; the shared shell
-     (nav, footer, type scale, card geometry) never changes, and the room is
-     told apart by material and light. A room sets these three variables on its
-     own root element and every shared piece — .eyebrow, .tag, .btn, the focus
-     ring — retunes itself without knowing which room it is standing in. */
-  --watchtower: #7ab8ff;
-  --watchtower-soft: rgba(122, 184, 255, 0.12);
-  --watchtower-ink: #06182c;
-
-  --forge: #ff8b3d;
-  --forge-soft: rgba(255, 139, 61, 0.13);
-  --forge-ink: #2a1102;
-
-  --library: #2ee6c5;
-  --library-soft: rgba(46, 230, 197, 0.12);
-  --library-ink: #04231e;
-
-  /* The shared "on the web" strip is site chrome, not a room, so it burns the
-     hall's lamplight rather than any one room's accent. This is the single
-     token that differs between this site and Argus. */
-  --presence-accent: #e9e2d4;
-  --radius: 12px;
-  --maxw: 1120px;
-
-  --sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  --mono: ui-monospace, 'Cascadia Code', 'SF Mono', Menlo, Consolas, monospace;
+  --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: ui-monospace, "Cascadia Code", Consolas, monospace;
 
   color-scheme: dark;
 }
 
-* { box-sizing: border-box; }
-
-html, body {
-  margin: 0;
-  padding: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--sans);
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
+* {
+  box-sizing: border-box;
 }
 
 body {
-  /* The building's own light is neutral. Colour belongs to the rooms — each one
-     lays its own down over this, so a global tint would fight all three. */
-  background-image:
-    radial-gradient(1000px 560px at 70% -10%, rgba(228, 234, 242, 0.045), transparent 62%),
-    radial-gradient(760px 440px at 6% 2%, rgba(228, 234, 242, 0.028), transparent 60%);
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* One soft light from above, so the page is not a flat black rectangle. */
+body {
+  background-image: radial-gradient(
+    900px 420px at 50% -10%,
+    rgba(122, 184, 255, 0.09),
+    transparent 70%
+  );
   background-attachment: fixed;
 }
 
-a { color: var(--accent); text-decoration: none; }
-a:hover { text-decoration: underline; }
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
 
-h1, h2, h3 { line-height: 1.2; letter-spacing: -0.02em; margin: 0 0 0.5rem; }
-h1 { font-size: clamp(2rem, 5vw, 3.1rem); }
-h2 { font-size: clamp(1.4rem, 3vw, 1.9rem); }
-p { margin: 0 0 1rem; }
+a:hover {
+  text-decoration: underline;
+}
 
-.wrap { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 1.25rem; }
-.section { padding: 4rem 0; }
-.muted { color: var(--muted); }
-.mono { font-family: var(--mono); }
+h1,
+h2 {
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
 
+code {
+  font-family: var(--mono);
+  font-size: 0.9em;
+  color: var(--accent);
+}
+
+/* The column everything sits in. */
+.wrap {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+/* Small mono label above a heading. */
 .eyebrow {
   font-family: var(--mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.18em;
+  font-size: 0.66rem;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--accent);
-  margin: 0 0 0.6rem;
-}
-
-.card {
-  background: var(--surface);
-  border: 1px solid var(--line-solid);
-  border-radius: var(--radius);
-  padding: 1.25rem;
-}
-
-.btn {
-  display: inline-block;
-  padding: 0.6rem 1.1rem;
-  border-radius: 999px;
-  border: 1px solid var(--accent);
-  color: var(--accent);
-  font-weight: 600;
-  font-size: 0.92rem;
-}
-.btn:hover { background: var(--accent-soft); text-decoration: none; }
-.btn.solid { background: var(--accent); color: var(--accent-ink); }
-.btn.solid:hover { filter: brightness(1.08); }
-
-.tag {
-  display: inline-block;
-  font-family: var(--mono);
-  font-size: 0.72rem;
-  padding: 0.18rem 0.55rem;
-  border-radius: 6px;
-  border: 1px solid var(--line-solid);
-  color: var(--muted);
-  background: var(--surface-2);
-}
-
-.room-watchtower {
-  --accent: var(--watchtower);
-  --accent-soft: var(--watchtower-soft);
-  --accent-ink: var(--watchtower-ink);
-}
-.room-forge {
-  --accent: var(--forge);
-  --accent-soft: var(--forge-soft);
-  --accent-ink: var(--forge-ink);
-}
-.room-library {
-  --accent: var(--library);
-  --accent-soft: var(--library-soft);
-  --accent-ink: var(--library-ink);
-}
-
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-  }
+  margin: 0 0 0.7rem;
 }

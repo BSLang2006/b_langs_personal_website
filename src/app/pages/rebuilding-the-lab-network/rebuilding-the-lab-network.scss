@@ -1,0 +1,75 @@
+/* Styles that only apply to this post. Copy this file along with the others
+   when you add a new post. */
+
+.back {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 2.5rem;
+}
+
+h1 {
+  font-size: clamp(1.9rem, 5vw, 2.5rem);
+  margin: 0 0 1.5rem;
+}
+
+.lead {
+  font-size: 1.15rem;
+  color: var(--text);
+  margin: 0 0 3rem;
+}
+
+h2 {
+  font-size: 1.25rem;
+  margin: 3rem 0 0.9rem;
+}
+
+p {
+  margin: 0 0 1.25rem;
+}
+
+ul {
+  padding-left: 1.2rem;
+  margin: 0 0 1.25rem;
+}
+
+li {
+  margin-bottom: 0.5rem;
+}
+
+/* A list inside a list: tighter, quieter, and tucked under its parent item. */
+li > ul {
+  margin: 0.4rem 0 0;
+  color: var(--muted);
+}
+
+li > ul li {
+  margin-bottom: 0.25rem;
+}
+
+strong {
+  color: #fff;
+}
+
+/* The one-line takeaway that closes each section. */
+.summary {
+  padding-left: 1rem;
+  border-left: 2px solid var(--accent);
+  color: var(--muted);
+  font-size: 0.95rem;
+  margin: 1.5rem 0 0;
+}
+
+/* ---- The diagram ----
+   It breaks out of the 640px reading column, because at that width its two
+   columns collapse into the mobile layout and the whole point of the picture —
+   two paths, side by side — is lost. It is a component now, so it sizes itself
+   to its own content; there is no height to keep in sync. */
+
+.diagram-wide {
+  width: min(1100px, calc(100vw - 3rem));
+  margin: 2rem auto 2.5rem;
+}

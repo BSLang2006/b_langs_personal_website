@@ -1,0 +1,109 @@
+<article class="wrap">
+  <a class="back" routerLink="/">← Back</a>
+
+  <p class="eyebrow">2026-08-30</p>
+
+  <h1>Building a dedicated CML management plane</h1>
+
+  <p class="lead">
+    Building a dedicated management plane for CML was supposed to be an
+    afternoon upgrade. Rebuilding the LAN went as planned. Tracing one DHCP
+    request through two physical NICs, VMware, Linux bridges, and CML turned it
+    into a weekend project—and the reason for this write-up.
+  </p>
+
+  <h2>The design</h2>
+
+  <p>
+    I added a second physical NIC to my Windows PC for a dedicated CML
+    management network, then rebuilt the LAN around a managed router, switch,
+    and wireless access point.
+  </p>
+
+  <ul>
+    <li><strong>VLAN 1</strong> — infrastructure and the CML controller</li>
+    <li><strong>VLAN 20</strong> — IoT devices and their own Wi-Fi SSID</li>
+    <li><strong>VLAN 99</strong> — CML lab-node management</li>
+  </ul>
+
+  <p>
+    The router and switch carry the VLANs, the access point maps the IoT SSID
+    to VLAN 20, and a dedicated switch port places the second PC NIC directly
+    on VLAN 99.
+  </p>
+
+  <p class="summary">
+    One PC, two Ethernet cables, and two intentionally separate paths into the
+    same CML VM.
+  </p>
+
+  <h2>The challenge</h2>
+
+  <p>
+    CML networking is turtles all the way down. A VLAN 99 DHCP broadcast had
+    to cross the physical switch, the second Windows NIC, a VMware virtual
+    network, a CML vNIC, a Linux bridge, and a CML External Connector before
+    reaching the simulated switch.
+  </p>
+
+  <p class="summary">
+    The VLAN configuration was straightforward. Proving every Layer-2 boundary
+    was the real work.
+  </p>
+
+  <h2>The finished topology</h2>
+
+  <p>
+    Here is what it looks like under the hood: two physical Ethernet
+    connections, two VMware networks, and two independent paths into CML.
+  </p>
+</article>
+
+<!-- The diagram sits outside the text column so it can use the full layout. -->
+<div class="diagram-wide">
+  <app-cml-networking></app-cml-networking>
+</div>
+
+<article class="wrap">
+  <p class="summary">
+    Cable A carries the infrastructure path to the CML controller. Cable B
+    carries the dedicated VLAN 99 management segment through VMware and CML to
+    the lab nodes. The passthrough components do not need management addresses;
+    the simulated switch owns its address on the <code>Vlan99</code> SVI.
+  </p>
+
+  <h2>What's next</h2>
+
+  <p>
+    DHCP proved the plumbing. Next, I am replacing the temporary leases with
+    static management addresses and turning this design into a reusable CML
+    baseline.
+  </p>
+
+  <p>
+    From there, I can push CCNP Enterprise configurations from VS Code, across
+    the bridge, and directly into the lab.
+  </p>
+
+  <p class="summary">
+    I build it, I break it, I document it, and I make it better.
+  </p>
+
+  <h2>Follow along</h2>
+
+  <p>
+    If any of this is useful or interesting, stick around—there is more coming.
+    You can find me on
+    <a
+      href="https://www.linkedin.com/in/brandon-lang-596b78215"
+      target="_blank"
+      rel="noopener"
+    >LinkedIn</a>
+    and
+    <a
+      href="https://github.com/BSLang2006"
+      target="_blank"
+      rel="noopener"
+    >GitHub</a>.
+  </p>
+</article>

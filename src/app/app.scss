@@ -1,20 +1,19 @@
-/* The host is a column at least as tall as the viewport and the router outlet
-   takes the slack, so the presence strip — which is the footer now, there is no
-   other one — always lands on the bottom edge rather than floating halfway up a
-   short page. The strip itself is sticky, so it stays there while you scroll.
+header {
+  padding: 1.75rem 1.5rem 0;
+}
 
-   100dvh rather than 100vh so mobile browsers do not measure the viewport as if
-   their collapsing address bar were not there. */
-:host {
-  display: flex;
-  flex-direction: column;
-  min-height: 100dvh;
+.brand {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.brand:hover {
+  color: var(--accent);
 }
 
 main {
-  flex: 1 0 auto;
-}
-
-app-presence {
-  flex: none;
+  padding: 3rem 1.5rem 6rem;
 }

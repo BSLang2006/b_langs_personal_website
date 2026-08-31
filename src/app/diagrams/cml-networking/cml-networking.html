@@ -1,0 +1,93 @@
+<div class="heading">
+  <h2 id="dual-nic-stack-title">CML dual-NIC network stack</h2>
+  <p class="text-muted">One PC, two physical Ethernet cables, two independent paths into the same CML VM.</p>
+</div>
+
+<section class="physical-map" aria-labelledby="physical-map-title">
+  <h3 id="physical-map-title" class="sr-only">Physical connections</h3>
+  <div class="switch-node">
+    <strong>AN-210-SW-8-POE physical switch</strong>
+    <div class="text-small text-muted">One router trunk; two separate access ports run to the PC</div>
+  </div>
+
+  <div class="cable-grid">
+    <div class="cable-link infra">
+      <span class="cable-label">Ethernet cable A · Infrastructure · VLAN 1 untagged</span>
+      <div class="nic-node">
+        <strong>Physical NIC 1 · Realtek PCIe 5GbE</strong>
+        <code>Windows name: INFRA-VLAN1</code>
+        <span class="text-small text-muted">Windows endpoint on 10.10.1.xxx · VMware bridge target: VMnet0</span>
+      </div>
+    </div>
+
+    <div class="cable-link lab">
+      <span class="cable-label">Ethernet cable B · Lab management · VLAN 99 untagged</span>
+      <div class="nic-node">
+        <strong>Physical NIC 2 · Realtek Gaming 2.5GbE</strong>
+        <code>Windows name: CML-MGMT-VLAN99</code>
+        <span class="text-small text-muted">Windows endpoint on 10.10.99.xxx · VMware bridge target: CML-MGMT-PLANE</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="path-grid">
+  <section class="path-column infra-path" aria-labelledby="infra-path-title">
+    <h3 id="infra-path-title">Cable A continues to the CML controller</h3>
+    <ol class="stack">
+      <li>
+        <span class="layer-name">VMware network</span>
+        <span class="layer-value"><strong>VMnet0</strong><span class="text-small text-muted">Bridged only to the Realtek 5GbE NIC</span></span>
+      </li>
+      <li>
+        <span class="layer-name">CML vNIC</span>
+        <span class="layer-value"><strong>Network Adapter 1</strong><code>Linux interface: ens160</code></span>
+      </li>
+      <li>
+        <span class="layer-name">Linux bridge</span>
+        <span class="layer-value"><strong>ens160 → bridge0</strong><code>bridge0 owns 10.10.1.xxx</code></span>
+      </li>
+      <li>
+        <span class="layer-name">Destination</span>
+        <span class="layer-value"><strong>CML controller</strong><code>Web GUI · Cockpit</code><span class="text-small text-muted">The infrastructure path terminates here</span></span>
+      </li>
+    </ol>
+  </section>
+
+  <section class="path-column lab-path" aria-labelledby="lab-path-title">
+    <h3 id="lab-path-title">Cable B continues through CML to lab nodes</h3>
+    <ol class="stack">
+      <li>
+        <span class="layer-name">VMware network</span>
+        <span class="layer-value"><strong>CML-MGMT-PLANE</strong><span class="text-small text-muted">Bridged only to the Realtek Gaming 2.5GbE NIC</span></span>
+      </li>
+      <li>
+        <span class="layer-name">CML vNIC</span>
+        <span class="layer-value"><strong>Network Adapter 2</strong><code>Linux interface: ens32</code></span>
+      </li>
+      <li>
+        <span class="layer-name">Linux bridge</span>
+        <span class="layer-value"><strong>ens32 → bridge99</strong><code>No IP on ens32 or bridge99</code><span class="text-small text-muted">Layer-2 frames pass through unchanged</span></span>
+      </li>
+      <li>
+        <span class="layer-name">CML connector</span>
+        <span class="layer-value"><strong>External Connector</strong><code>Label: CML-MGMT-VLAN99</code></span>
+      </li>
+      <li>
+        <span class="layer-name">Lab endpoint</span>
+        <span class="layer-value"><strong>sw0 · SVI Vlan99</strong><code>10.10.99.xxx/24</code><span class="text-small text-muted">The lab-management IP lives here</span></span>
+      </li>
+    </ol>
+  </section>
+</div>
+
+<div class="ip-note" aria-label="Address ownership legend">
+  <div>
+    <span class="mark" aria-hidden="true"></span>
+    <span><strong>Layer-3 endpoint</strong><span class="text-small text-muted">Windows owns one IP on each NIC; bridge0 and sw0's Vlan99 SVI also own IPs.</span></span>
+  </div>
+  <div>
+    <span class="mark hollow" aria-hidden="true"></span>
+    <span><strong>Layer-2 plumbing</strong><span class="text-small text-muted">VMware networks, ens32, bridge99, and the External Connector carry frames without becoming IP hops.</span></span>
+  </div>
+</div>

@@ -1,88 +1,33 @@
-<div class="threshold">
-  <section class="hero">
-    <div class="lamp" aria-hidden="true"></div>
+<div class="wrap">
+  <p class="eyebrow">Network operations · Infrastructure · Software</p>
 
-    <div class="wrap grid">
-      <div class="intro">
-        <p class="eyebrow">Network operations · Infrastructure · Software</p>
-        <h1>B Lang's Citadel</h1>
-        <p class="lead">
-        Welcome to the Citadel, a place where you can get to know me and see what I am learning, 
-        what I have made, and what I wrote down. 
-        </p>
+  <h1>Brandon Lang</h1>
 
-        <div class="who">
-          <div class="portrait">
-            @if (hasPortrait()) {
-              <img
-                src="/portrait.jpg"
-                alt="B Lang"
-                width="72"
-                height="72"
-                (error)="hasPortrait.set(false)"
-              />
-            } @else {
-              <span class="monogram" aria-hidden="true">BL</span>
-            }
-          </div>
-          <p class="muted small">
-            Currently in West Palm Beach, FL — AWS Certified Cloud Practitioner, working
-            through CCNP Enterprise, and <a routerLink="/watchtower">working it out in public</a>.
-          </p>
-        </div>
+  <p class="lead">
+    I work across networking, software, automation and security — building
+    things, untangling problems, and figuring out how complex systems fit
+    together. AWS Certified Cloud Practitioner, working through CCNP Enterprise.
+    Based in West Palm Beach, FL.
+  </p>
 
-        <div class="cta">
-          <a class="btn solid" [href]="site.linkedinUrl" target="_blank" rel="noopener">LinkedIn</a>
-          <a class="btn" [href]="'mailto:' + site.email">Email me</a>
-          <a class="btn" [href]="site.githubUrl" target="_blank" rel="noopener">GitHub</a>
-        </div>
-      </div>
+  <!-- Writing. Add a post by copying a line here and adding the page.
+       See the README. -->
+  <section class="writing">
+    <h2 class="eyebrow">Writing</h2>
 
-      <div class="panel-wrap">
-        <app-hud />
-      </div>
-    </div>
+    <ul>
+      <li>
+        <a routerLink="/posts/rebuilding-the-lab-network">
+          <span class="date">2026-08-30</span>
+          <span class="title">Building a dedicated CML management plane</span>
+        </a>
+      </li>
+    </ul>
   </section>
 
-  <section class="hall">
-    <div class="wrap">
-      <p class="rooms-label mono">
-        <span>Three rooms</span>
-        <span class="hint">pick a door</span>
-      </p>
-
-      <div class="doors">
-        <a class="door room-watchtower" routerLink="/watchtower">
-          <span class="light" aria-hidden="true"></span>
-          <p class="eyebrow">Watchtower</p>
-          <h2>The observability factor</h2>
-          <p class="muted">
-            Maintaining a system requires remembering decisions made 12 months ago—and understanding what changed five minutes ago. The Watchtower is where I track system health, document architecture, and investigate what happens when things break.          </p>
-          <span class="more mono">Climb up &#8594;</span>
-        </a>
-
-        <a class="door room-forge" routerLink="/forge">
-          <span class="light" aria-hidden="true"></span>
-          <p class="eyebrow">Forge</p>
-          <h2>What I have made</h2>
-          <p class="muted">
-            A self-hosted operations platform, addressable LED fixtures driven over MQTT,
-            and the lab they all run in.
-          </p>
-          <span class="more mono">Step inside &#8594;</span>
-        </a>
-
-        <a class="door room-library" routerLink="/library">
-          <span class="light" aria-hidden="true"></span>
-          <p class="eyebrow">Library</p>
-          <h2>What I wrote down</h2>
-          <p class="muted">
-            Outages I chased down, things that broke in ways the docs did not predict, and
-            what the fix actually was.
-          </p>
-          <span class="more mono">Read the shelf &#8594;</span>
-        </a>
-      </div>
-    </div>
-  </section>
+  <p class="elsewhere">
+    <a href="https://www.linkedin.com/in/brandon-lang-596b78215" target="_blank" rel="noopener">LinkedIn</a>
+    <a href="https://github.com/BSLang2006" target="_blank" rel="noopener">GitHub</a>
+    <a href="mailto:BrandonScottLang@gmail.com">Email</a>
+  </p>
 </div>
