@@ -1,0 +1,59 @@
+<!-- SHARED COMPONENT — keep identical across both sites. See presence.ts.
+     This is the site footer: the contentinfo landmark, and the only one. -->
+<footer class="presence">
+  <ul class="presence__nodes">
+    @for (n of nodes; track n.id) {
+      <li
+        class="presence__node"
+        [class.is-here]="n.id === current()"
+        [class.is-building]="n.status === 'building' && n.id !== current()"
+      >
+        @if (n.id === current()) {
+          <span class="presence__tag" aria-current="page">
+            <span class="presence__mark" aria-hidden="true"></span>
+            <span class="presence__text">
+              <span class="presence__name">{{ n.name }}</span>
+              <span class="presence__short">{{ n.short }}</span>
+              <span class="presence__kind mono">you are here</span>
+            </span>
+          </span>
+        } @else if (n.status === 'building') {
+          <!-- Not a link. The domain is not up yet, and pointing at a 404 is
+               worse than admitting it is still being built. -->
+          <span class="presence__tag">
+            <span class="presence__mark" aria-hidden="true"></span>
+            <span class="presence__text">
+              <span class="presence__name">{{ n.name }}</span>
+              <span class="presence__short">{{ n.short }}</span>
+              <span class="presence__kind mono">pardon the dust</span>
+            </span>
+          </span>
+        } @else {
+          <!-- New tab: this strip exists so a visitor can go look at the other
+               properties without losing the one they are on. rel="noopener" is
+               required alongside target="_blank"; "me" marks these as the same
+               person's profiles. -->
+          <a class="presence__tag" [href]="n.href" target="_blank" rel="me noopener">
+            <span class="presence__mark" aria-hidden="true"></span>
+            <span class="presence__text">
+              <span class="presence__name">{{ n.name }}</span>
+              <span class="presence__short">{{ n.short }}</span>
+              <span class="presence__kind mono">{{ n.kind }}</span>
+            </span>
+            <span class="presence__claim">{{ n.claim }}</span>
+          </a>
+        }
+      </li>
+    }
+  </ul>
+
+  <!-- Deliberately outside the four. It is a way to reach me, not a place I
+       keep work, and the four-corner idea only reads if it stays four. -->
+  <a class="presence__contact" [href]="'mailto:' + email">
+    <span class="presence__contact-icon" aria-hidden="true">✉</span>
+    <span class="presence__contact-text">
+      <span class="presence__contact-label mono">Email</span>
+      <span class="presence__contact-value">{{ email }}</span>
+    </span>
+  </a>
+</footer>

@@ -1,3 +1,22 @@
+/* The shell is a column at least as tall as the viewport, and <main> takes the
+   slack — so on a short page the footer lands on the bottom edge instead of
+   floating halfway up. The footer itself is sticky, so it stays visible while
+   you scroll and settles at the end. */
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+main {
+  flex: 1 0 auto;
+  padding: 3rem 1.5rem 4rem;
+}
+
+app-presence {
+  flex: none;
+}
+
 header {
   padding: 1.75rem 1.5rem 0;
 }
@@ -14,6 +33,3 @@ header {
   color: var(--accent);
 }
 
-main {
-  padding: 3rem 1.5rem 6rem;
-}

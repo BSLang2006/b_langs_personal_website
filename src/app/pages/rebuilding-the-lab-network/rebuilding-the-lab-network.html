@@ -46,6 +46,102 @@
     reaching the simulated switch.
   </p>
 
+  <p>
+    Any one of those can drop the frame silently, and none of them tell you
+    which. So I stopped guessing and worked upward — proving one boundary at a
+    time, and refusing to move on until the current one was provably good.
+  </p>
+
+  <h3>The physical switch</h3>
+
+  <p>Two port problems, both mine:</p>
+
+  <ul>
+    <li>
+      The router uplink had to carry VLAN 99 <strong>tagged</strong> while
+      keeping VLAN 1 untagged.
+    </li>
+    <li>
+      The port feeding the CML management NIC had to carry VLAN 99
+      <strong>untagged, with PVID 99</strong>.
+    </li>
+  </ul>
+
+  <p>
+    Then the one that cost me real time: the router uplink's acceptable frame
+    type was set to <code>untagged-only</code>. Tagged VLAN 99 frames were
+    being discarded at the uplink before they reached anything else. Changing
+    it to <code>all</code> opened the path.
+  </p>
+
+  <p>
+    <strong>Proof:</strong> the Windows <code>CML-MGMT-VLAN99</code> NIC pulled
+    a <code>10.10.99.xxx</code> address. That one lease proves the physical
+    VLAN and the DHCP path both work. If you cannot get this far, nothing above
+    it will work either — fix it before you touch the hypervisor.
+  </p>
+
+  <h3>VMware</h3>
+
+  <p>
+    The <code>CML-MGMT-PLANE</code> network was bridged to Wi-Fi instead of the
+    dedicated 2.5 GbE NIC. VMware will happily bridge to whichever adapter it
+    likes and never mention it.
+  </p>
+
+  <p>
+    Corrected, the VM's adapters map cleanly: <code>VMnet0</code> to the
+    infrastructure NIC on VLAN 1, <code>CML-MGMT-PLANE</code> to the dedicated
+    NIC on VLAN 99.
+  </p>
+
+  <h3>Inside CML</h3>
+
+  <p>
+    This is where I lost the most time. CML is a Linux box, and it behaves like
+    one.
+  </p>
+
+  <p>
+    <code>ens160</code> is the controller's interface on <code>bridge0</code>.
+    <code>ens32</code> is the VLAN 99 path, and it had nowhere to go — so I
+    created <code>bridge99</code> and attached <code>ens32</code> to it. Then
+    the change that actually mattered: the External Connector was still pointed
+    at <code>bridge0</code>. Moving it to <code>bridge99</code>, connecting
+    <code>sw0</code> to it, and putting that port in VLAN 99 completed the path.
+  </p>
+
+  <p>
+    The last trap is the one that looks like a mistake. I never gave
+    <code>bridge99</code> an IP address. Three commands tell you whether the
+    plumbing is right:
+  </p>
+
+  <pre><code>ip -br link
+ip -br addr
+bridge link</code></pre>
+
+  <p>The output I was looking for:</p>
+
+  <pre><code>ens32     UP
+bridge99  UP
+
+ens32 master bridge99 state forwarding</code></pre>
+
+  <p>
+    Both interfaces up, <code>ens32</code> enslaved to <code>bridge99</code> and
+    forwarding — and neither one holding an address. That absence is not a
+    missing step, it is the proof. The bridge never routed VLAN 99; it
+    transparently carried its Ethernet frames into the lab:
+  </p>
+
+  <pre><code>VMware vNIC → ens32 → bridge99 → CML External Connector → sw0</code></pre>
+
+  <p>
+    One last place to get it wrong: the DHCP client belongs on the VLAN 99 SVI,
+    not VLAN 1.
+  </p>
+
   <p class="summary">
     The VLAN configuration was straightforward. Proving every Layer-2 boundary
     was the real work.

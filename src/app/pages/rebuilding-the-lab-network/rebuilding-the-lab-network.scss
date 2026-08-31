@@ -27,6 +27,37 @@ h2 {
   margin: 3rem 0 0.9rem;
 }
 
+/* Steps within a section. Quieter than an h2 so the section still reads as one
+   thing rather than four. */
+h3 {
+  font-size: 1rem;
+  margin: 2.25rem 0 0.6rem;
+  color: var(--accent);
+}
+
+/* Terminal output and commands. The left rule marks it as machine-spoken
+   rather than written. */
+pre {
+  margin: 0 0 1.4rem;
+  padding: 0.9rem 1rem;
+  /* Wrap at spaces rather than scrolling sideways: the path line is longer
+     than the column, and horizontal scroll inside prose is worse than a wrap.
+     overflow-x stays as a fallback for anything unbreakable. */
+  white-space: pre-wrap;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--accent);
+  border-radius: 6px;
+  background: rgb(255 255 255 / 3%);
+  font-size: 0.82rem;
+  line-height: 1.65;
+}
+
+/* Inline code is the accent colour; a whole block of it would be shouting. */
+pre code {
+  color: var(--text);
+}
+
 p {
   margin: 0 0 1.25rem;
 }

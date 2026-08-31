@@ -8,6 +8,12 @@
   --accent: #7ab8ff;
   --line: #1e2530;
 
+  /* The surface the footer strip sits on, and the width it spans. It reads
+     both of these itself; everything else it needs it takes from the tokens
+     above. */
+  --surface: #111720;
+  --presence-measure: 1200px;
+
   --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: ui-monospace, "Cascadia Code", Consolas, monospace;
 
