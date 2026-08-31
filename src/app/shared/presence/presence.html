@@ -29,10 +29,7 @@
             </span>
           </span>
         } @else {
-          <!-- New tab: this strip exists so a visitor can go look at the other
-               properties without losing the one they are on. rel="noopener" is
-               required alongside target="_blank"; "me" marks these as the same
-               person's profiles. -->
+
           <a class="presence__tag" [href]="n.href" target="_blank" rel="me noopener">
             <span class="presence__mark" aria-hidden="true"></span>
             <span class="presence__text">
