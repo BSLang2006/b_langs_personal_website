@@ -80,3 +80,117 @@ code {
   color: var(--accent);
   margin: 0 0 0.7rem;
 }
+
+
+/* ==========================================================================
+   Journal entries
+   --------------------------------------------------------------------------
+   Every entry's typography lives here rather than in a per-post stylesheet.
+   Two reasons: the body of an entry is projected into <app-entry>, so it keeps
+   the page's own encapsulation and a stylesheet on the entry component would
+   never reach it — and a daily entry should not need a stylesheet at all.
+   ========================================================================== */
+
+.entry .back {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 2.5rem;
+}
+
+.entry .back:hover {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.entry h1 {
+  font-size: clamp(1.9rem, 5vw, 2.5rem);
+  margin: 0 0 2rem;
+}
+
+.entry h2 {
+  font-size: 1.25rem;
+  margin: 2.75rem 0 0.9rem;
+}
+
+/* A step inside a section — quieter, so a section still reads as one thing. */
+.entry h3 {
+  font-size: 1rem;
+  margin: 2rem 0 0.6rem;
+  color: var(--accent);
+}
+
+.entry p {
+  margin: 0 0 1.25rem;
+}
+
+.entry ul,
+.entry ol {
+  padding-left: 1.2rem;
+  margin: 0 0 1.4rem;
+}
+
+.entry li {
+  margin-bottom: 0.55rem;
+}
+
+.entry li > ul {
+  margin: 0.4rem 0 0;
+  color: var(--muted);
+}
+
+.entry strong {
+  color: #fff;
+}
+
+/* Snippets, written as |this| in the entry. */
+.entry code {
+  font-family: var(--mono);
+  font-size: 0.86em;
+  padding: 0.1em 0.4em;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: rgb(255 255 255 / 4%);
+  color: var(--accent);
+  overflow-wrap: anywhere;
+}
+
+/* Terminal output. The left rule marks it as machine-spoken, not written. */
+.entry pre {
+  margin: 0 0 1.4rem;
+  padding: 0.9rem 1rem;
+  white-space: pre-wrap;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--accent);
+  border-radius: 6px;
+  background: rgb(255 255 255 / 3%);
+  font-size: 0.82rem;
+  line-height: 1.65;
+}
+
+.entry pre code {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+}
+
+/* The one-line takeaway that closes a section. */
+.entry .summary {
+  padding-left: 1rem;
+  border-left: 2px solid var(--accent);
+  color: var(--muted);
+  font-size: 0.95rem;
+  margin: 1.5rem 0 0;
+}
+
+/* The opening line, a touch larger so the eye lands on it. */
+.entry .lead {
+  font-size: 1.12rem;
+  color: var(--text);
+  margin: 0 0 2rem;
+}

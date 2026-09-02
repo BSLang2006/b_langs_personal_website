@@ -1,0 +1,13 @@
+<article class="wrap entry">
+  <a class="back" routerLink="/">← Back</a>
+
+  <p class="eyebrow">{{ date() }}</p>
+
+  <h1>{{ title() }}</h1>
+
+  <!-- Projected content keeps the page's own encapsulation, so the styling for
+       it lives in the global .entry block in styles.scss rather than here. -->
+  <div codeMarks>
+    <ng-content />
+  </div>
+</article>

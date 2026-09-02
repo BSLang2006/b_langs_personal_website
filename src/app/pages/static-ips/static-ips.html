@@ -1,0 +1,39 @@
+<app-entry date="2026-09-01" title="Making a L2 triangle with the MGMT plane">
+  <h2>Layer 2 can still serve me some humble pie</h2>
+
+  <p class="lead">
+    Today I felt that I was able to finally learn in the way that suits me.
+  </p>
+
+  <h3>The thing that stumped me</h3>
+
+  <p>
+    <strong>
+      VTP has to be in transparent mode to allow a config file add a VLAN to the
+      database
+    </strong>
+  </p>
+
+  <p>
+    I almost decided to give up and just manually enter the vlan information for
+    every device after they turned on for the first time. But that was not going
+    to pass muster, automation was the reason I built this. Automation was the
+    reason I spent an entire weekend building a management plane. I persisted.
+  </p>
+
+  <p>
+    I stripped the config file down to nothing to only add the vlan to the
+    hostname, database, and a console line. Still no joy, the vlan would not
+    take, every other thing I put in the config file was taking... |show vtp
+    status| was the command that cracked the nut. |VTP mode server| was set, and
+    I didn't think it was the fix because you need to set VLANS on the server
+    right? I flipped it to transparent and my config file was able to upload
+    VLAN information to the database with |VTP mode transparent| set.
+  </p>
+
+  <h3>Also today</h3>
+
+  <ul>
+    <li>Add the other things that fought you today.</li>
+  </ul>
+</app-entry>
