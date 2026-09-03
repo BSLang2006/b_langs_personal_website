@@ -1,55 +1,49 @@
-<article class="wrap">
-  <a class="back" routerLink="/">← Back</a>
-
-  <p class="eyebrow">2026-08-30</p>
-
-  <h1>Building a dedicated CML management plane</h1>
-
+<app-entry>
   <p class="lead">
-    Building a dedicated management plane for CML was supposed to be an
-    afternoon upgrade. Rebuilding the LAN went as planned. Tracing one DHCP
-    request through two physical NICs, VMware, Linux bridges, and CML turned it
-    into a weekend project—and the reason for this write-up.
+    Building a dedicated management plane for CML was supposed to be an afternoon upgrade.
+    Rebuilding the LAN went as planned. Tracing one DHCP request through two physical NICs, VMware,
+    Linux bridges, and CML turned it into a weekend project—and the reason for this write-up.
   </p>
 
   <h2>The design</h2>
 
   <p>
-    I added a second physical NIC to my Windows PC for a dedicated CML
-    management network, then rebuilt the LAN around a managed router, switch,
-    and wireless access point.
+    I added a second physical NIC to my Windows PC for a dedicated CML management network, then
+    rebuilt the LAN around a managed router, switch, and wireless access point.
   </p>
 
-  <ul>
-    <li><strong>VLAN 1</strong> — infrastructure and the CML controller</li>
-    <li><strong>VLAN 20</strong> — IoT devices and their own Wi-Fi SSID</li>
-    <li><strong>VLAN 99</strong> — CML lab-node management</li>
-  </ul>
+  <dl class="specs">
+    <dt>VLAN 1</dt>
+    <dd>Infrastructure and the CML controller</dd>
+
+    <dt>VLAN 20</dt>
+    <dd>IoT devices and their own Wi-Fi SSID</dd>
+
+    <dt>VLAN 99</dt>
+    <dd>CML lab-node management</dd>
+  </dl>
 
   <p>
-    The router and switch carry the VLANs, the access point maps the IoT SSID
-    to VLAN 20, and a dedicated switch port places the second PC NIC directly
-    on VLAN 99.
+    The router and switch carry the VLANs, the access point maps the IoT SSID to VLAN 20, and a
+    dedicated switch port places the second PC NIC directly on VLAN 99.
   </p>
 
   <p class="summary">
-    One PC, two Ethernet cables, and two intentionally separate paths into the
-    same CML VM.
+    One PC, two Ethernet cables, and two intentionally separate paths into the same CML VM.
   </p>
 
   <h2>The challenge</h2>
 
   <p>
-    CML networking is turtles all the way down. A VLAN 99 DHCP broadcast had
-    to cross the physical switch, the second Windows NIC, a VMware virtual
-    network, a CML vNIC, a Linux bridge, and a CML External Connector before
-    reaching the simulated switch.
+    CML networking is turtles all the way down. A VLAN 99 DHCP broadcast had to cross the physical
+    switch, the second Windows NIC, a VMware virtual network, a CML vNIC, a Linux bridge, and a CML
+    External Connector before reaching the simulated switch.
   </p>
 
   <p>
-    Any one of those can drop the frame silently, and none of them tell you
-    which. So I stopped guessing and worked upward — proving one boundary at a
-    time, and refusing to move on until the current one was provably good.
+    Any one of those can drop the frame silently, and none of them tell you which. So I stopped
+    guessing and worked upward — proving one boundary at a time, and refusing to move on until the
+    current one was provably good.
   </p>
 
   <h3>The physical switch</h3>
@@ -58,8 +52,7 @@
 
   <ul>
     <li>
-      The router uplink had to carry VLAN 99 <strong>tagged</strong> while
-      keeping VLAN 1 untagged.
+      The router uplink had to carry VLAN 99 <strong>tagged</strong> while keeping VLAN 1 untagged.
     </li>
     <li>
       The port feeding the CML management NIC had to carry VLAN 99
@@ -68,53 +61,46 @@
   </ul>
 
   <p>
-    Then the one that cost me real time: the router uplink's acceptable frame
-    type was set to <code>untagged-only</code>. Tagged VLAN 99 frames were
-    being discarded at the uplink before they reached anything else. Changing
-    it to <code>all</code> opened the path.
+    Then the one that cost me real time: the router uplink's acceptable frame type was set to
+    <code>untagged-only</code>. Tagged VLAN 99 frames were being discarded at the uplink before they
+    reached anything else. Changing it to <code>all</code> opened the path.
   </p>
 
-  <p>
-    <strong>Proof:</strong> the Windows <code>CML-MGMT-VLAN99</code> NIC pulled
-    a <code>10.10.99.xxx</code> address. That one lease proves the physical
-    VLAN and the DHCP path both work. If you cannot get this far, nothing above
-    it will work either — fix it before you touch the hypervisor.
-  </p>
+  <aside class="note proof">
+    <p>
+      The Windows <code>CML-MGMT-VLAN99</code> NIC pulled a <code>10.10.99.xxx</code> address. That
+      one lease proves the physical VLAN and the DHCP path both work. If you cannot get this far,
+      nothing above it will work either — fix it before you touch the hypervisor.
+    </p>
+  </aside>
 
   <h3>VMware</h3>
 
   <p>
-    The <code>CML-MGMT-PLANE</code> network was bridged to Wi-Fi instead of the
-    dedicated 2.5 GbE NIC. VMware will happily bridge to whichever adapter it
-    likes and never mention it.
+    The <code>CML-MGMT-PLANE</code> network was bridged to Wi-Fi instead of the dedicated 2.5 GbE
+    NIC. VMware will happily bridge to whichever adapter it likes and never mention it.
   </p>
 
   <p>
-    Corrected, the VM's adapters map cleanly: <code>VMnet0</code> to the
-    infrastructure NIC on VLAN 1, <code>CML-MGMT-PLANE</code> to the dedicated
-    NIC on VLAN 99.
+    Corrected, the VM's adapters map cleanly: <code>VMnet0</code> to the infrastructure NIC on VLAN
+    1, <code>CML-MGMT-PLANE</code> to the dedicated NIC on VLAN 99.
   </p>
 
   <h3>Inside CML</h3>
 
-  <p>
-    This is where I lost the most time. CML is a Linux box, and it behaves like
-    one.
-  </p>
+  <p>This is where I lost the most time. CML is a Linux box, and it behaves like one.</p>
 
   <p>
-    <code>ens160</code> is the controller's interface on <code>bridge0</code>.
-    <code>ens32</code> is the VLAN 99 path, and it had nowhere to go — so I
-    created <code>bridge99</code> and attached <code>ens32</code> to it. Then
-    the change that actually mattered: the External Connector was still pointed
-    at <code>bridge0</code>. Moving it to <code>bridge99</code>, connecting
+    <code>ens160</code> is the controller's interface on <code>bridge0</code>. <code>ens32</code> is
+    the VLAN 99 path, and it had nowhere to go — so I created <code>bridge99</code> and attached
+    <code>ens32</code> to it. Then the change that actually mattered: the External Connector was
+    still pointed at <code>bridge0</code>. Moving it to <code>bridge99</code>, connecting
     <code>sw0</code> to it, and putting that port in VLAN 99 completed the path.
   </p>
 
   <p>
     The last trap is the one that looks like a mistake. I never gave
-    <code>bridge99</code> an IP address. Three commands tell you whether the
-    plumbing is right:
+    <code>bridge99</code> an IP address. Three commands tell you whether the plumbing is right:
   </p>
 
   <pre><code>ip -br link
@@ -129,77 +115,61 @@ bridge99  UP
 ens32 master bridge99 state forwarding</code></pre>
 
   <p>
-    Both interfaces up, <code>ens32</code> enslaved to <code>bridge99</code> and
-    forwarding — and neither one holding an address. That absence is not a
-    missing step, it is the proof. The bridge never routed VLAN 99; it
-    transparently carried its Ethernet frames into the lab:
+    Both interfaces up, <code>ens32</code> enslaved to <code>bridge99</code> and forwarding — and
+    neither one holding an address. That absence is not a missing step, it is the proof. The bridge
+    never routed VLAN 99; it transparently carried its Ethernet frames into the lab:
   </p>
 
   <pre><code>VMware vNIC → ens32 → bridge99 → CML External Connector → sw0</code></pre>
 
-  <p>
-    One last place to get it wrong: the DHCP client belongs on the VLAN 99 SVI,
-    not VLAN 1.
-  </p>
+  <p>One last place to get it wrong: the DHCP client belongs on the VLAN 99 SVI, not VLAN 1.</p>
 
   <p class="summary">
-    The VLAN configuration was straightforward. Proving every Layer-2 boundary
-    was the real work.
+    The VLAN configuration was straightforward. Proving every Layer-2 boundary was the real work.
   </p>
 
   <h2>The finished topology</h2>
 
   <p>
-    Here is what it looks like under the hood: two physical Ethernet
-    connections, two VMware networks, and two independent paths into CML.
+    Here is what it looks like under the hood: two physical Ethernet connections, two VMware
+    networks, and two independent paths into CML.
   </p>
-</article>
+  <!-- .wide steps outside the 640px reading column: at that width the
+       diagram's two columns collapse and the whole point of the picture —
+       two paths, side by side — is lost. -->
+  <div class="wide">
+    <app-cml-networking />
+  </div>
 
-<!-- The diagram sits outside the text column so it can use the full layout. -->
-<div class="diagram-wide">
-  <app-cml-networking></app-cml-networking>
-</div>
-
-<article class="wrap">
   <p class="summary">
-    Cable A carries the infrastructure path to the CML controller. Cable B
-    carries the dedicated VLAN 99 management segment through VMware and CML to
-    the lab nodes. The passthrough components do not need management addresses;
-    the simulated switch owns its address on the <code>Vlan99</code> SVI.
+    Cable A carries the infrastructure path to the CML controller. Cable B carries the dedicated
+    VLAN 99 management segment through VMware and CML to the lab nodes. The passthrough components
+    do not need management addresses; the simulated switch owns its address on the
+    <code>Vlan99</code> SVI.
   </p>
 
   <h2>What's next</h2>
 
   <p>
-    DHCP proved the plumbing. Next, I am replacing the temporary leases with
-    static management addresses and turning this design into a reusable CML
-    baseline.
+    DHCP proved the plumbing. Next, I am replacing the temporary leases with static management
+    addresses and turning this design into a reusable CML baseline.
   </p>
 
   <p>
-    From there, I can push CCNP Enterprise configurations from VS Code, across
-    the bridge, and directly into the lab.
+    From there, I can push CCNP Enterprise configurations from VS Code, across the bridge, and
+    directly into the lab.
   </p>
 
-  <p class="summary">
-    I build it, I break it, I document it, and I make it better.
-  </p>
+  <p class="summary">I build it, I break it, I document it, and I make it better.</p>
 
   <h2>Follow along</h2>
 
   <p>
-    If any of this is useful or interesting, stick around—there is more coming.
-    You can find me on
-    <a
-      href="https://www.linkedin.com/in/brandon-lang-596b78215"
-      target="_blank"
-      rel="noopener"
-    >LinkedIn</a>
+    If any of this is useful or interesting, stick around—there is more coming. You can find me on
+    <a href="https://www.linkedin.com/in/brandon-lang-596b78215" target="_blank" rel="noopener"
+      >LinkedIn</a
+    >
     and
-    <a
-      href="https://github.com/BSLang2006"
-      target="_blank"
-      rel="noopener"
-    >GitHub</a>.
+    <a href="https://github.com/BSLang2006" target="_blank" rel="noopener">GitHub</a>.
   </p>
-</article>
+</app-entry>

@@ -21,15 +21,40 @@ header {
   padding: 1.75rem 1.5rem 0;
 }
 
+/* The wordmark: the same serif B as the landing page, in the same colour,
+   with the rest of the name in mono beside it. The B is the mark — it is what
+   carries from page to page. */
 .brand {
+  display: inline-flex;
+  align-items: baseline;
+
+  /* Same reason as the landing page: the mark has to stand apart from the
+     word, or the two read as one. */
+  gap: 0.7rem;
+  text-decoration: none;
+}
+
+.brand .mark {
+  font-family: var(--display);
+  font-size: 1.35rem;
+  line-height: 1;
+  font-weight: 700;
+  color: var(--accent-2);
+}
+
+.brand .word {
   font-family: var(--mono);
   font-size: 0.7rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--muted);
+  transition: color 0.18s ease;
 }
 
 .brand:hover {
-  color: var(--accent);
+  text-decoration: none;
 }
 
+.brand:hover .word {
+  color: var(--accent);
+}

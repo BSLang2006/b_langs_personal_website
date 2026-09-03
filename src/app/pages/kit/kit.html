@@ -1,0 +1,262 @@
+<app-entry>
+  <p class="lead">
+    Everything a write-up can use. None of it needs importing and none of it needs a stylesheet —
+    write the class, get the block. Each one below is shown as it renders, with the markup that made
+    it underneath.
+  </p>
+
+  <h2>Start here</h2>
+
+  <p>
+    The whole file for a new post. Copy it into
+    <code>my-new-post.html</code> and write over the placeholders.
+  </p>
+
+  <p>
+    There is no date and no title in it: <code>&lt;app-entry&gt;</code> draws the header from
+    <code>posts.ts</code>, so the only thing in this file is what you have to say.
+  </p>
+
+  <pre data-label="my-new-post.html"><code>&lt;app-entry&gt;
+  &lt;p class="lead"&gt;
+    What today was about, in a sentence or two.
+  &lt;/p&gt;
+
+  &lt;h2&gt;The thing that stumped me&lt;/h2&gt;
+
+  &lt;p&gt;
+    What happened, and what the command was that cracked it.
+  &lt;/p&gt;
+
+  &lt;p class="summary"&gt;The one-line takeaway.&lt;/p&gt;
+
+  &lt;h2&gt;Also today&lt;/h2&gt;
+
+  &lt;ul&gt;
+    &lt;li&gt;The other things that fought you.&lt;/li&gt;
+  &lt;/ul&gt;
+
+  &lt;p class="summary"&gt;What you are doing next.&lt;/p&gt;
+&lt;/app-entry&gt;</code></pre>
+
+  <aside class="note" data-label="The shape">
+    <p>
+      Open with a <code>.lead</code>, close each section with a <code>.summary</code>. Those two do
+      most of the work — everything below is for when a post needs more.
+    </p>
+  </aside>
+
+  <h2>The everyday four</h2>
+
+  <p>
+    These cover a daily entry on their own. A paragraph is a paragraph, |two pipes| makes a code
+    snippet, and the two below open and close a section.
+  </p>
+
+  <p class="lead">The opening line, a touch larger so the eye lands on it.</p>
+
+  <p class="summary">The one-line takeaway that closes a section.</p>
+
+  <pre><code>&lt;p class="lead"&gt;Opens the entry.&lt;/p&gt;
+&lt;p class="summary"&gt;Closes a section.&lt;/p&gt;
+&lt;p&gt;A command written as |show vtp status| comes out as a snippet.&lt;/p&gt;</code></pre>
+
+  <h2>Notes</h2>
+
+  <p>An aside from the main line of the post. Three flavours.</p>
+
+  <aside class="note">
+    <p>Plain. Something worth saying that is not part of the argument.</p>
+  </aside>
+
+  <aside class="note warn">
+    <p>
+      The trap. The router uplink's acceptable frame type was
+      <code>untagged-only</code>, and tagged frames were discarded before they reached anything
+      else.
+    </p>
+  </aside>
+
+  <aside class="note proof">
+    <p>
+      The thing that showed it was fixed. The NIC pulled a
+      <code>10.10.99.xxx</code> address.
+    </p>
+  </aside>
+
+  <aside class="note" data-label="Rule of thumb">
+    <p>Any note can carry its own label instead of the default.</p>
+  </aside>
+
+  <pre><code>&lt;aside class="note"&gt;&lt;p&gt;Plain.&lt;/p&gt;&lt;/aside&gt;
+&lt;aside class="note warn"&gt;&lt;p&gt;The trap.&lt;/p&gt;&lt;/aside&gt;
+&lt;aside class="note proof"&gt;&lt;p&gt;How I proved it.&lt;/p&gt;&lt;/aside&gt;
+&lt;aside class="note" data-label="Rule of thumb"&gt;&lt;p&gt;…&lt;/p&gt;&lt;/aside&gt;</code></pre>
+
+  <h2>Specs</h2>
+
+  <p>For the this-is-that pairs — a VLAN and what lives on it.</p>
+
+  <dl class="specs">
+    <dt>VLAN 1</dt>
+    <dd>Infrastructure and the CML controller</dd>
+
+    <dt>VLAN 99</dt>
+    <dd>CML lab-node management</dd>
+  </dl>
+
+  <pre><code>&lt;dl class="specs"&gt;
+  &lt;dt&gt;VLAN 1&lt;/dt&gt;
+  &lt;dd&gt;Infrastructure and the CML controller&lt;/dd&gt;
+&lt;/dl&gt;</code></pre>
+
+  <h2>Steps</h2>
+
+  <p>A procedure someone is meant to follow in order.</p>
+
+  <ol class="steps">
+    <li>Put the switch in <code>VTP mode transparent</code>.</li>
+    <li>Push the config file.</li>
+    <li>Confirm the VLAN landed in the database.</li>
+  </ol>
+
+  <pre><code>&lt;ol class="steps"&gt;
+  &lt;li&gt;Put the switch in |VTP mode transparent|.&lt;/li&gt;
+&lt;/ol&gt;</code></pre>
+
+  <h2>Terminal</h2>
+
+  <p>
+    A plain <code>&lt;pre&gt;</code> is machine output. Add a label when it matters which box you
+    are looking at.
+  </p>
+
+  <pre data-label="CML controller"><code>ip -br link
+ens32     UP
+bridge99  UP</code></pre>
+
+  <p>And fold away the long output nobody needs to scroll past.</p>
+
+  <details>
+    <summary>Full interface dump</summary>
+
+    <pre><code>ens160    UP    52:54:00:11:22:33
+ens32     UP    52:54:00:44:55:66
+bridge0   UP    52:54:00:11:22:33
+bridge99  UP    52:54:00:44:55:66</code></pre>
+  </details>
+
+  <pre><code>&lt;pre data-label="CML controller"&gt;&lt;code&gt;ip -br link&lt;/code&gt;&lt;/pre&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;Full interface dump&lt;/summary&gt;
+  &lt;pre&gt;&lt;code&gt;…&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;</code></pre>
+
+  <h2>Tables</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Port</th>
+        <th>VLAN</th>
+        <th>Tagging</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr>
+        <td><code>gi1/0/1</code></td>
+        <td>1, 99</td>
+        <td>99 tagged, 1 untagged</td>
+      </tr>
+
+      <tr>
+        <td><code>gi1/0/8</code></td>
+        <td>99</td>
+        <td>Untagged, PVID 99</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <pre><code>&lt;table&gt;…&lt;/table&gt;
+
+&lt;div class="scroll"&gt;&lt;table&gt;…&lt;/table&gt;&lt;/div&gt;   wider than the column
+&lt;div class="wide"&gt;&lt;table&gt;…&lt;/table&gt;&lt;/div&gt;     use the full page</code></pre>
+
+  <h2>A line worth stopping on</h2>
+
+  <p class="pull">
+    The VLAN configuration was straightforward. Proving every Layer-2 boundary was the real work.
+  </p>
+
+  <pre><code>&lt;p class="pull"&gt;The line worth stopping on.&lt;/p&gt;</code></pre>
+
+  <h2>Two things side by side</h2>
+
+  <div class="cols">
+    <div>
+      <p class="eyebrow">Before</p>
+
+      <pre><code>acceptable-frame-type
+  untagged-only</code></pre>
+    </div>
+
+    <div>
+      <p class="eyebrow">After</p>
+
+      <pre><code>acceptable-frame-type
+  all</code></pre>
+    </div>
+  </div>
+
+  <pre><code>&lt;div class="cols"&gt;
+  &lt;div&gt;…&lt;/div&gt;
+  &lt;div&gt;…&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+  <p class="summary">Collapses to one column on a phone, so it is safe to reach for.</p>
+
+  <h2>Breaking the column</h2>
+
+  <p>
+    The reading column is 640px, which is right for prose and wrong for a diagram.
+    <code>.wide</code> steps outside it and stays centred — put it on a <code>div</code>, a
+    <code>figure</code>, or a table wrapper.
+  </p>
+
+  <figure class="wide">
+    <svg viewBox="0 0 1000 120" role="img" aria-label="A wide element">
+      <rect x="1" y="1" width="998" height="118" fill="none" />
+      <text
+        x="500"
+        y="66"
+        text-anchor="middle"
+        fill="#8b98a9"
+        font-family="ui-monospace, monospace"
+        font-size="15"
+      >
+        anything that needs more than 640px
+      </text>
+    </svg>
+
+    <figcaption>
+      A figure with a caption. Drop the <code>.wide</code> and it sits in the column like everything
+      else.
+    </figcaption>
+  </figure>
+
+  <pre><code>&lt;div class="wide"&gt;&lt;app-my-diagram /&gt;&lt;/div&gt;
+
+&lt;figure class="wide"&gt;
+  &lt;img src="…" alt="…" /&gt;
+  &lt;figcaption&gt;What to look at.&lt;/figcaption&gt;
+&lt;/figure&gt;</code></pre>
+
+  <hr />
+
+  <p class="summary">
+    That rule above is an <code>&lt;hr /&gt;</code>, for when a post has two halves. Everything on
+    this page lives in the entry kit block at the bottom of <code>styles.scss</code>.
+  </p>
+</app-entry>

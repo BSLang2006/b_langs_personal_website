@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { Entry } from '../../shared/entry/entry';
 
 @Component({
-  selector: 'app-static-ips',
+  selector: 'app-vtp-l2-triangle',
   imports: [Entry],
-  templateUrl: './static-ips.html',
+  templateUrl: './vtp-l2-triangle.html',
 })
-export class StaticIPs {}
+export class VtpL2Triangle {}

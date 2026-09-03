@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Entry } from '../../shared/entry/entry';
 import { CmlNetworking } from '../../diagrams/cml-networking/cml-networking';
 
 @Component({
   selector: 'app-rebuilding-the-lab-network',
-  imports: [RouterLink, CmlNetworking],
+  imports: [Entry, CmlNetworking],
   templateUrl: './rebuilding-the-lab-network.html',
-  styleUrl: './rebuilding-the-lab-network.scss',
 })
 export class RebuildingTheLabNetwork {}

@@ -1,0 +1,104 @@
+<app-entry>
+  <p class="lead">
+    Three routers on a broadcast segment and two more on /30 links. Getting the network statements
+    right, turning on MD5, and the handful of show commands that tell you whether any of it worked.
+  </p>
+
+  <h2>Network statement wildcard masks</h2>
+
+  <p>
+    The easy way is <code>network 0.0.0.0 255.255.255.255 area 0</code>. That matches every
+    interface on the router and puts all of them in area 0 — fine in a lab, lazy anywhere else,
+    because it enables OSPF on interfaces you never meant to include.
+  </p>
+
+  <p>
+    A specific wildcard narrows it to the interfaces you actually want. For an interface at
+    <code>10.10.1.24</code>, either of these enables OSPF on it:
+  </p>
+
+  <pre data-label="R1"><code>network 10.10.1.24 0.0.0.0 area 0
+network 10.10.1.0 0.0.0.31 area 0</code></pre>
+
+  <p>
+    The first matches that one address exactly. The second matches the whole
+    <code>10.10.1.0/27</code> block it sits in.
+  </p>
+
+  <p>
+    The trap is that the statement has to match the interface's own address. If the wildcard does
+    not cover it, OSPF is simply never enabled there — no hellos go out, no adjacency forms, and
+    nothing tells you that is why. A neighbor that will not come up is worth checking here before
+    anywhere else.
+  </p>
+
+  <p class="summary">Narrow the wildcard on purpose, not by accident.</p>
+
+  <h2>OSPF MD5 authentication</h2>
+
+  <p>
+    Authentication is per interface, and it takes two commands: one to set the key, one to turn the
+    checking on.
+  </p>
+
+  <pre data-label="R1"><code>interface GigabitEthernet0/1
+ ip ospf message-digest-key 1 md5 MySecret
+ ip ospf authentication message-digest</code></pre>
+
+  <p>
+    The checking can be switched on for a whole area under the process instead, so you are not
+    repeating that third line on every interface:
+  </p>
+
+  <pre data-label="R1"><code>router ospf 1
+ area 0 authentication message-digest</code></pre>
+
+  <p>
+    That only turns the checking on. Every interface still needs its own
+    <code>message-digest-key</code> line — the key is never inherited from the area.
+  </p>
+
+  <p>
+    Both the key ID and the key string have to match on the two ends. If either one differs the
+    adjacency never forms, and it fails quietly: the neighbor just never appears.
+  </p>
+
+  <p class="summary">Key ID and key string, matching on both ends, on every interface.</p>
+
+  <h2>Show commands</h2>
+
+  <p>The five I keep coming back to, roughly in the order I run them:</p>
+
+  <dl class="specs">
+    <dt>show ip ospf neighbor</dt>
+    <dd>
+      Did the adjacency form. FULL is what you want; a neighbor that is missing entirely usually
+      means the two ends never exchanged hellos at all.
+    </dd>
+
+    <dt>show ip ospf interface brief</dt>
+    <dd>
+      Which interfaces OSPF is actually running on, and their area and cost. This is where a
+      wildcard that missed shows up — the interface is just not in the list.
+    </dd>
+
+    <dt>show ip protocols</dt>
+    <dd>
+      The network statements as the router stored them, plus the router ID and any passive
+      interfaces. Good for catching a statement that is not saying what you thought it said.
+    </dd>
+
+    <dt>show ip ospf interface Gi0/1</dt>
+    <dd>
+      The detail view for one interface: authentication, hello and dead timers, and who won the DR
+      election.
+    </dd>
+
+    <dt>show ip route ospf</dt>
+    <dd>The point of the exercise — the routes that actually arrived.</dd>
+  </dl>
+
+  <p class="summary">
+    Neighbor first, then the interface, then the routes. Most problems are visible in the first two.
+  </p>
+</app-entry>

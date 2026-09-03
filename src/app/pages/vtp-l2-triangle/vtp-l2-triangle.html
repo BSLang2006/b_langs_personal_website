@@ -1,0 +1,93 @@
+<app-entry>
+  <p class="lead">
+    Today I felt that I was able to finally learn in the way that suits me. Three switches in a
+    triangle, a config file that would push everything except the one thing I needed, and one
+    command that explained it.
+  </p>
+
+  <h2>Layer 2 can still serve me some humble pie</h2>
+
+  <h3>The thing that stumped me</h3>
+
+  <p>
+    <strong>
+      VTP has to be in transparent mode before a config file can add a VLAN to the database.
+    </strong>
+  </p>
+
+  <p>
+    I almost decided to give up and just manually enter the VLAN information for every device after
+    they turned on for the first time. But that was not going to pass muster, automation was the
+    reason I built this. Automation was the reason I spent an entire weekend building a management
+    plane. I persisted.
+  </p>
+
+  <p>
+    I stripped the config file down to nothing: the hostname, the VLAN, and a console line. Still no
+    joy. Every other line in that file was taking, and the VLAN was not.
+  </p>
+
+  <h3>The command that cracked it</h3>
+
+  <pre data-label="SW1"><code>show vtp status</code></pre>
+
+  <pre data-label="SW1"><code>VTP Version capable            : 1 to 3
+VTP Operating Mode             : Server
+Maximum VLANs supported locally: 1005
+Number of existing VLANs       : 5
+Configuration Revision         : 0</code></pre>
+
+  <p>
+    <code>VTP Operating Mode : Server</code>. I did not think that was the fix, you set VLANs on
+    the server, right? So why would server mode be the thing stopping me?
+  </p>
+
+  <h3>Why it actually happens</h3>
+
+  <p>
+    Because of where the VLAN gets written. In server and client mode the VLAN database does not
+    live in the running configuration at all — it lives in
+    <code>vlan.dat</code> in flash, kept in step with the rest of the domain by VTP itself. A
+    <code>vlan 99</code> line pushed in a config file is not the place VTP looks, so nothing lands.
+  </p>
+
+  <p>
+    Transparent mode changes that. The switch stops participating in the domain, and its VLAN
+    definitions get written into the running configuration like any other command — which is exactly
+    what a config file can push.
+  </p>
+
+  <pre data-label="SW1"><code>configure terminal
+ vtp mode transparent
+ vlan 99
+  name MGMT</code></pre>
+
+  <p>Then the config file went through on the next boot without touching it.</p>
+
+  <h3>Checking it</h3>
+
+  <dl class="specs">
+    <dt>show vtp status</dt>
+    <dd>The mode, first. This is the one I should have run an hour earlier than I did.</dd>
+
+    <dt>show vlan brief</dt>
+    <dd>Whether the VLAN is actually in the database, and which ports are in it.</dd>
+
+    <dt>show run | section vlan</dt>
+    <dd>
+      In transparent mode the VLANs appear here. If this comes back empty on a switch you just
+      configured, you are not in transparent mode.
+    </dd>
+
+    <dt>show interfaces trunk</dt>
+    <dd>
+      Which VLANs are actually crossing the links between the three switches — a VLAN in the
+      database still has to be allowed on the trunk.
+    </dd>
+  </dl>
+
+  <p class="summary">
+    Check the mode before you blame the config file. The VLAN was never being rejected — it was
+    being written somewhere the file could not reach.
+  </p>
+</app-entry>
